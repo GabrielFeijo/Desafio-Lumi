@@ -1,5 +1,7 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
+import { customerSchemas } from './modules/Customer/customer.schema';
+import customerRoutes from './modules/Customer/customer.route';
 
 export const app = fastify();
 
@@ -10,6 +12,12 @@ app.get('/', async () => {
 });
 
 async function main() {
+	for (const schema of customerSchemas) {
+		app.addSchema(schema);
+	}
+
+	app.register(customerRoutes, { prefix: '/customer' });
+
 	try {
 		await app.listen({ port: 3333 });
 		console.log(`Server running on 3333`);

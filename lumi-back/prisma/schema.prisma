@@ -15,7 +15,7 @@ datasource db {
 
 model Customer {
   id             String    @id @default(cuid())
-  customerNumber Int       @unique
+  customerNumber BigInt    @unique
   name           String
   invoices       Invoice[]
   createdAt      DateTime  @default(now())
