@@ -24,20 +24,20 @@ model Customer {
 
 model Invoice {
   id                                  String   @id @default(cuid())
-  InstallationNumber                  Int
-  ReferenceMonth                      String
-  DueDate                             DateTime
-  EnergyQuantity                      Int
-  EnergyAmount                        Decimal  @db.Decimal(10, 2)
-  ExemptEnergyQuantity                Int
-  ExemptEnergyAmount                  Decimal  @db.Decimal(10, 2)
-  CompensatedEnergyQuantity           Int
-  CompensatedEnergyAmount             Decimal  @db.Decimal(10, 2)
-  MunicipalPublicLightingContribution Decimal  @db.Decimal(10, 2)
-  ownerId                             String
-  owner                               Customer @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  installationNumber                  BigInt
+  referenceMonth                      String
+  dueDate                             DateTime
+  energyQuantity                      Int
+  energyAmount                        Decimal  @db.Decimal(10, 2)
+  exemptEnergyQuantity                Int?
+  exemptEnergyAmount                  Decimal? @db.Decimal(10, 2)
+  compensatedEnergyQuantity           Int?
+  compensatedEnergyAmount             Decimal? @db.Decimal(10, 2)
+  municipalPublicLightingContribution Decimal  @db.Decimal(10, 2)
+  customerId                          BigInt
+  customer                            Customer @relation(fields: [customerId], references: [customerNumber], onDelete: Cascade)
   createdAt                           DateTime @default(now())
   updatedAt                           DateTime @updatedAt
 
-  @@index([ownerId])
+  @@index([customerId])
 }
