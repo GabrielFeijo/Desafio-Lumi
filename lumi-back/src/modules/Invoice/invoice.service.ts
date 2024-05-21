@@ -2,6 +2,21 @@ import { MultipartFile } from '@fastify/multipart';
 import { db } from '../../utils/prisma';
 import { CreateInvoiceInput } from './invoice.schema';
 import { extractDataFromPdf } from '../../utils/extract-data';
+import {
+	SPACING,
+	positions,
+	startItemPositions,
+} from '../../constants/positions';
+import {
+	extractSequentialValues,
+	extractSingleValues,
+} from '../../utils/extract-values';
+import { transformValues } from '../../utils/transform-sequencial-values';
+import {
+	createCustomer,
+	getCustomerByCustomerId,
+} from '../Customer/customer.service';
+import { transformToDate } from '../../utils/transform-to-date';
 
 export async function createInvoice(data: CreateInvoiceInput) {
 	const invoice = await db.invoice.create({
@@ -40,7 +55,45 @@ export async function processPDFUpload(
 
 			const data = await extractDataFromPdf(pdfBuffer);
 
-			return data;
+			const content = data.pages[0].content;
+
+			const { customerNumber, name, ...rest } = extractSingleValues(
+				content,
+				positions
+			);
+
+			const sequencialValues = extractSequentialValues(
+				content,
+				startItemPositions,
+				SPACING
+			);
+
+			const renamedValues = transformValues(sequencialValues);
+
+			let customer = await getCustomerByCustomerId(BigInt(customerNumber));
+
+			if (!customer) {
+				customer = await createCustomer({
+					name: name,
+					customerNumber: BigInt(customerNumber),
+				});
+			}
+
+			console.log(customer);
+			console.log(rest);
+
+			const invoice = await createInvoice({
+				...renamedValues,
+				customerId: BigInt(customerNumber),
+				installationNumber: BigInt(rest.installationNumber),
+				dueDate: transformToDate(rest.dueDate),
+				// totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
+				referenceMonth: rest.referenceMonth,
+			});
+
+			console.log(invoice);
+
+			return invoice;
 		}
 	}
 }

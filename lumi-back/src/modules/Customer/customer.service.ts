@@ -8,3 +8,13 @@ export async function createCustomer(data: CreateCustomerInput) {
 
 	return customer;
 }
+
+export async function getCustomerByCustomerId(customerNumber: bigint) {
+	const customer = await db.customer.findUnique({
+		where: {
+			customerNumber,
+		},
+	});
+
+	return customer;
+}

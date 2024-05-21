@@ -20,7 +20,17 @@ async function invoiceRoutes(app: FastifyInstance) {
 		createInvoiceHandler
 	);
 
-	app.post('/upload', {}, uploadFileHandler);
+	app.post(
+		'/upload',
+		{
+			schema: {
+				response: {
+					201: $ref('singleInvoiceResponseSchemaWithCustomer'),
+				},
+			},
+		},
+		uploadFileHandler
+	);
 
 	app.get(
 		'/',

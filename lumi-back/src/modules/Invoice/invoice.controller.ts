@@ -38,9 +38,16 @@ export async function uploadFileHandler(
 	try {
 		const parts = request.files();
 
+		console.log(Object.keys(parts).length === 0);
+
+		if (Object.keys(parts).length === 0) {
+			reply.status(400).send({ error: 'No file uploaded.' });
+			return;
+		}
+
 		const data = await processPDFUpload(parts);
 
-		reply.status(200).send({ data });
+		reply.status(201).send(data);
 	} catch (error) {
 		console.error(`Error handling upload: ${error}`);
 		reply.status(500).send({ error: 'Error handling upload' });

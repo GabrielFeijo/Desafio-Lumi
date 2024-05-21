@@ -26,7 +26,7 @@ const extractSingleValues = (
 		const { x, y } = position;
 		const item = content.find(
 			(item) =>
-				Math.abs(item.x - x) < 5 && Math.abs(item.y - y) < 5 && item.width > 0
+				Math.abs(item.x - x) < 6 && Math.abs(item.y - y) < 6 && item.width > 0
 		);
 
 		if (item) {
@@ -42,7 +42,9 @@ const extractSequentialValues = (
 	positions: Positions,
 	spacing: number
 ): { [key: string]: string }[] => {
-	const results: { [key: string]: string }[] = [];
+	const results: {
+		[key: string]: string;
+	}[] = [];
 	let index = 0;
 
 	while (true) {
@@ -54,8 +56,8 @@ const extractSequentialValues = (
 			const adjustedY = y + index * spacing;
 			const item = content.find(
 				(item) =>
-					Math.abs(item.x - x) < 5 &&
-					Math.abs(item.y - adjustedY) < 5 &&
+					Math.abs(item.x - x) < 6 &&
+					Math.abs(item.y - adjustedY) < 6 &&
 					item.width > 0
 			);
 

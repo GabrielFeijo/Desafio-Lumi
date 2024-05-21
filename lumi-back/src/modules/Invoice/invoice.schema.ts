@@ -42,7 +42,7 @@ const invoiceCore = {
 			invalid_type_error: 'exemptEnergyAmount must be a number',
 		})
 		.optional(),
-	municipalPublicLightingContribution: z.string({
+	municipalPublicLightingContribution: z.number({
 		required_error: 'municipalPublicLightingContribution is required',
 		invalid_type_error: 'exemptEnergyAmount must be a number',
 	}),
@@ -68,6 +68,11 @@ const singleInvoiceResponseSchema = z.object({
 	customer: z.object({ name: z.string(), id: z.string().cuid() }),
 });
 
+const singleInvoiceResponseSchemaWithCustomer = z.object({
+	...invoiceGenerated,
+	...invoiceCore,
+});
+
 const invoicesResponseSchema = z.array(singleInvoiceResponseSchema);
 
 export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;
@@ -76,6 +81,7 @@ export const { schemas: invoiceSchemas, $ref } = buildJsonSchemas(
 	{
 		createInvoiceSchema,
 		singleInvoiceResponseSchema,
+		singleInvoiceResponseSchemaWithCustomer,
 		invoicesResponseSchema,
 	},
 	{
