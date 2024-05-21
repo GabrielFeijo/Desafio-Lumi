@@ -27,7 +27,6 @@ export async function createInvoiceHandler(
 
 export async function getInvoicesHandler() {
 	const invoices = await getInvoices();
-
 	return invoices;
 }
 
@@ -36,20 +35,27 @@ export async function uploadFileHandler(
 	reply: FastifyReply
 ) {
 	try {
-		const parts = request.files();
+		const part = await request.file();
 
-		console.log(Object.keys(parts).length === 0);
-
-		if (Object.keys(parts).length === 0) {
-			reply.status(400).send({ error: 'No file uploaded.' });
-			return;
+		if (!part) {
+			return reply.status(400).send({
+				message: 'No file uploaded',
+			});
 		}
 
-		const data = await processPDFUpload(parts);
+		const data = await processPDFUpload(part);
 
 		reply.status(201).send(data);
 	} catch (error) {
-		console.error(`Error handling upload: ${error}`);
-		reply.status(500).send({ error: 'Error handling upload' });
+		if (error instanceof Error) {
+			return reply.status(409).send({
+				message: 'Something went wrong',
+				error: error.message,
+			});
+		}
+
+		return reply.status(500).send({
+			message: 'Something went wrong',
+		});
 	}
 }

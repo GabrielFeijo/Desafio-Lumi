@@ -7,6 +7,7 @@ import { invoiceSchemas } from './modules/Invoice/invoice.schema';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import fastifyMultipart from '@fastify/multipart';
+import awsRoutes from './modules/Aws/aws.route';
 
 export const app = fastify();
 
@@ -58,6 +59,7 @@ async function main() {
 
 	app.register(customerRoutes, { prefix: 'api/customers' });
 	app.register(invoiceRoutes, { prefix: 'api/invoices' });
+	app.register(awsRoutes, { prefix: 'api/s3' });
 
 	try {
 		await app.listen({ port: 3333 });

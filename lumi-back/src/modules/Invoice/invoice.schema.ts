@@ -10,6 +10,10 @@ const invoiceCore = {
 		required_error: 'referenceMonth is required',
 		invalid_type_error: 'referenceMonth must be a string',
 	}),
+	totalAmount: z.number({
+		required_error: 'totalAmount is required',
+		invalid_type_error: 'totalAmount must be a number',
+	}),
 	dueDate: z.date({
 		required_error: 'dueDate is required',
 		invalid_type_error: 'dueDate must be a date',
@@ -46,6 +50,7 @@ const invoiceCore = {
 		required_error: 'municipalPublicLightingContribution is required',
 		invalid_type_error: 'exemptEnergyAmount must be a number',
 	}),
+	pdfUrl: z.string().url(),
 	customerId: z.bigint({
 		required_error: 'customerId is required',
 		invalid_type_error: 'customerId must be a bigint',

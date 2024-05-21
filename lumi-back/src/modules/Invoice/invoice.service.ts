@@ -17,6 +17,7 @@ import {
 	getCustomerByCustomerId,
 } from '../Customer/customer.service';
 import { transformToDate } from '../../utils/transform-to-date';
+import { uploadFile } from '../Aws/aws.service';
 
 export async function createInvoice(data: CreateInvoiceInput) {
 	const invoice = await db.invoice.create({
@@ -41,59 +42,79 @@ export async function getInvoices() {
 	return invoices;
 }
 
-export async function processPDFUpload(
-	parts: AsyncIterableIterator<MultipartFile>
-) {
-	for await (const part of parts) {
-		if (part.file) {
-			const buffers = [];
-			for await (const chunk of part.file) {
-				buffers.push(chunk);
-			}
+export async function getInvoicesByCustomerNumberAndReferenceMonth({
+	customerId,
+	referenceMonth,
+}: {
+	customerId: bigint;
+	referenceMonth: string;
+}) {
+	const invoice = await db.invoice.findFirst({
+		where: {
+			customerId,
+			referenceMonth,
+		},
+	});
 
-			const pdfBuffer = Buffer.concat(buffers);
+	return invoice;
+}
 
-			const data = await extractDataFromPdf(pdfBuffer);
-
-			const content = data.pages[0].content;
-
-			const { customerNumber, name, ...rest } = extractSingleValues(
-				content,
-				positions
-			);
-
-			const sequencialValues = extractSequentialValues(
-				content,
-				startItemPositions,
-				SPACING
-			);
-
-			const renamedValues = transformValues(sequencialValues);
-
-			let customer = await getCustomerByCustomerId(BigInt(customerNumber));
-
-			if (!customer) {
-				customer = await createCustomer({
-					name: name,
-					customerNumber: BigInt(customerNumber),
-				});
-			}
-
-			console.log(customer);
-			console.log(rest);
-
-			const invoice = await createInvoice({
-				...renamedValues,
-				customerId: BigInt(customerNumber),
-				installationNumber: BigInt(rest.installationNumber),
-				dueDate: transformToDate(rest.dueDate),
-				// totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
-				referenceMonth: rest.referenceMonth,
-			});
-
-			console.log(invoice);
-
-			return invoice;
+export async function processPDFUpload(part: MultipartFile) {
+	if (part.file) {
+		const buffers = [];
+		for await (const chunk of part.file) {
+			buffers.push(chunk);
 		}
+
+		const pdfBuffer = Buffer.concat(buffers);
+
+		const data = await extractDataFromPdf(pdfBuffer);
+
+		const content = data.pages[0].content;
+
+		const { customerNumber, name, ...rest } = extractSingleValues(
+			content,
+			positions
+		);
+
+		const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({
+			referenceMonth: rest.referenceMonth,
+			customerId: BigInt(customerNumber),
+		});
+
+		if (existingFile) {
+			throw new Error('Invoice already exists');
+		}
+
+		const sequencialValues = extractSequentialValues(
+			content,
+			startItemPositions,
+			SPACING
+		);
+
+		const renamedValues = transformValues(sequencialValues);
+
+		const url = await uploadFile(pdfBuffer, part.filename);
+
+		let customer = await getCustomerByCustomerId(BigInt(customerNumber));
+
+		if (!customer) {
+			customer = await createCustomer({
+				name: name,
+				customerNumber: BigInt(customerNumber),
+			});
+		}
+
+		const invoice = await createInvoice({
+			...renamedValues,
+			customerId: BigInt(customerNumber),
+			installationNumber: BigInt(rest.installationNumber),
+			dueDate: transformToDate(rest.dueDate),
+			totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
+			referenceMonth: rest.referenceMonth,
+			pdfUrl: url,
+		});
+
+		return invoice;
 	}
 }
