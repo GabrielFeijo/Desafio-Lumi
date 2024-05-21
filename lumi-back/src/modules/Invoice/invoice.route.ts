@@ -11,6 +11,8 @@ async function invoiceRoutes(app: FastifyInstance) {
 		'/',
 		{
 			schema: {
+				tags: ['Invoices'],
+				summary: 'Create invoice',
 				body: $ref('createInvoiceSchema'),
 				response: {
 					201: $ref('singleInvoiceResponseSchema'),
@@ -24,6 +26,9 @@ async function invoiceRoutes(app: FastifyInstance) {
 		'/upload',
 		{
 			schema: {
+				tags: ['Invoices'],
+				summary: 'Extract invoice data from PDF',
+				consumes: ['multipart/form-data'],
 				response: {
 					201: $ref('singleInvoiceResponseSchemaWithCustomer'),
 				},
@@ -36,6 +41,8 @@ async function invoiceRoutes(app: FastifyInstance) {
 		'/',
 		{
 			schema: {
+				tags: ['Invoices'],
+				summary: 'Get invoices',
 				response: {
 					200: $ref('invoicesResponseSchema'),
 				},

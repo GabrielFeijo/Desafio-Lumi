@@ -8,6 +8,7 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import fastifyMultipart from '@fastify/multipart';
 import awsRoutes from './modules/Aws/aws.route';
+import { awsSchemas } from './modules/Aws/aws.schema';
 
 export const app = fastify();
 
@@ -31,10 +32,9 @@ const swaggerOptions = {
 			},
 		},
 
-		host: '0.0.0.0:3000',
 		basePath: '/',
 		schemes: ['http', 'https'],
-		consumes: ['application/json'],
+		consumes: ['application/json', 'multipart/form-data'],
 		produces: ['application/json'],
 	},
 };
@@ -45,7 +45,7 @@ const swaggerUiOptions = {
 };
 
 async function main() {
-	for (const schema of [...customerSchemas, ...invoiceSchemas]) {
+	for (const schema of [...customerSchemas, ...invoiceSchemas, ...awsSchemas]) {
 		app.addSchema(schema);
 	}
 

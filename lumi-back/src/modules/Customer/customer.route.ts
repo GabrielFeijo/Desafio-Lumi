@@ -7,6 +7,8 @@ async function customerRoutes(app: FastifyInstance) {
 		'/',
 		{
 			schema: {
+				tags: ['Customers'],
+				summary: 'Register customer',
 				body: $ref('createCustomerSchema'),
 				response: {
 					201: $ref('createCustomerResponseSchema'),
