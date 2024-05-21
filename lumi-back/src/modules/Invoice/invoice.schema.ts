@@ -1,6 +1,5 @@
 import { buildJsonSchemas } from 'fastify-zod';
 import * as z from 'zod';
-import { $ref as $cref } from '../Customer/customer.schema';
 
 const invoiceCore = {
 	installationNumber: z.bigint({

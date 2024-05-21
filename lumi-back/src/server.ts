@@ -4,10 +4,12 @@ import { customerSchemas } from './modules/Customer/customer.schema';
 import customerRoutes from './modules/Customer/customer.route';
 import invoiceRoutes from './modules/Invoice/invoice.route';
 import { invoiceSchemas } from './modules/Invoice/invoice.schema';
+import fastifyMultipart from '@fastify/multipart';
 
 export const app = fastify();
 
 app.register(cors, { origin: true });
+app.register(fastifyMultipart);
 
 app.get('/', async () => {
 	return { message: 'Hello World!' };

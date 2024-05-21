@@ -1,6 +1,10 @@
 import { FastifyInstance } from 'fastify';
 import { $ref } from './invoice.schema';
-import { createInvoiceHandler, getInvoicesHandler } from './invoice.controller';
+import {
+	createInvoiceHandler,
+	getInvoicesHandler,
+	uploadFileHandler,
+} from './invoice.controller';
 
 async function invoiceRoutes(app: FastifyInstance) {
 	app.post(
@@ -15,6 +19,8 @@ async function invoiceRoutes(app: FastifyInstance) {
 		},
 		createInvoiceHandler
 	);
+
+	app.post('/upload', {}, uploadFileHandler);
 
 	app.get(
 		'/',
