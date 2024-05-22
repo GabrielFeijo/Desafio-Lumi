@@ -1,7 +1,8 @@
 import { Home, PlugZap, ReceiptText } from 'lucide-react';
+
 import { Separator } from './ui/separator';
-import { ModeToggle } from './theme-toggle';
 import { NavLink } from './nav-link';
+import { ModeToggle } from './theme-toggle';
 
 export function Header() {
 	return (

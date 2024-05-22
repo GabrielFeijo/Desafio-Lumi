@@ -1,7 +1,7 @@
 'use client';
+import { ComponentPropsWithoutRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ComponentPropsWithoutRef } from 'react';
 
 interface NavLinkProps extends ComponentPropsWithoutRef<'a'> {
 	href: string;
