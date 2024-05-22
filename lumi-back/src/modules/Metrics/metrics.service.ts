@@ -1,3 +1,4 @@
+import { Invoice } from '@prisma/client';
 import { db } from '../../utils/prisma';
 import { startOfMonth, subMonths } from 'date-fns';
 
@@ -69,4 +70,32 @@ export async function getTotalCustomers(): Promise<{
 		total: totalCustomers,
 		difference: difference,
 	};
+}
+
+export async function getTotalEnergyConsumption(): Promise<{
+	total: number;
+}> {
+	const invoices: Invoice[] = await db.invoice.findMany();
+
+	let total = 0;
+
+	invoices.forEach((invoice) => {
+		total += invoice.energyQuantity + (invoice.exemptEnergyQuantity || 0);
+	});
+
+	return { total };
+}
+
+export async function getTotalEnergyCompensated(): Promise<{
+	total: number;
+}> {
+	const invoices: Invoice[] = await db.invoice.findMany();
+
+	let total = 0;
+
+	invoices.forEach((invoice) => {
+		total += invoice.compensatedEnergyQuantity || 0;
+	});
+
+	return { total };
 }

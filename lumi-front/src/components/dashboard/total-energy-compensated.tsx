@@ -1,28 +1,28 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, Users } from 'lucide-react';
+import { Leaf, Loader2 } from 'lucide-react';
 
-import { getTotalCustomers } from '@/api/get-total-customers';
+import { getTotalEnergyCompensated } from '@/api/get-total-energy-compensated';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { CardSkeleton } from './card-skeleton';
 
-export function CustomerCounter() {
+export function TotalEnergyCompensated() {
 	const { data, isFetching: isLoading } = useQuery({
-		queryKey: ['metrics', 'total-customers'],
-		queryFn: getTotalCustomers,
+		queryKey: ['metrics', 'total-energy-compensated'],
+		queryFn: getTotalEnergyCompensated,
 	});
 
 	return (
 		<Card>
-			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2 gap-2'>
+			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 				<CardTitle className='text-base font-semibold'>
-					Total de clientes
+					Energia compensada
 				</CardTitle>
 				{isLoading ? (
 					<Loader2 className='size-4 animate-spin text-muted-foreground' />
 				) : (
-					<Users className='size-4 text-muted-foreground' />
+					<Leaf className='size-4 text-muted-foreground' />
 				)}
 			</CardHeader>
 			<CardContent className='space-y-1'>
@@ -31,14 +31,7 @@ export function CustomerCounter() {
 						<span className='text-2xl font-bold'>{data.total}</span>
 
 						<p className='text-xs text-muted-foreground'>
-							<span
-								className={`${
-									data.difference > 0 ? 'text-emerald-500' : 'text-red-500'
-								}`}
-							>
-								{data.difference > 0 ? `+${data.difference}` : data.difference}
-							</span>{' '}
-							em relação ao mês passado
+							<span className={'text-emerald-500'}>KWh</span> - (Kilowatt-hora)
 						</p>
 					</>
 				) : (

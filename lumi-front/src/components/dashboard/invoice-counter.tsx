@@ -9,7 +9,7 @@ import { CardSkeleton } from './card-skeleton';
 
 export function InvoiceCounter() {
 	const { data, isFetching: isLoading } = useQuery({
-		queryKey: ['metrics', 'invoice-total'],
+		queryKey: ['metrics', 'total-invoices'],
 		queryFn: getTotalInvoices,
 	});
 
