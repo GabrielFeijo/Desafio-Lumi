@@ -1,4 +1,6 @@
 import { CustomerCounter } from '@/components/dashboard/customer-counter';
+import { EnergyStatsChart } from '@/components/dashboard/energy-stats-chart';
+import { EnergyValuesChart } from '@/components/dashboard/energy-values-chart';
 import { InvoiceCounter } from '@/components/dashboard/invoice-counter';
 import { TotalEnergyCompensated } from '@/components/dashboard/total-energy-compensated';
 import { TotalEnergyConsumption } from '@/components/dashboard/total-energy-consumption';
@@ -15,6 +17,9 @@ export default function Home() {
 				<TotalEnergyConsumption />
 				<TotalEnergyCompensated />
 			</div>
+
+			<EnergyStatsChart />
+			<EnergyValuesChart />
 		</section>
 	);
 }
