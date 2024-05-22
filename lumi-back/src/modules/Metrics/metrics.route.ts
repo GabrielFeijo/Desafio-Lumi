@@ -1,5 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import {
+	getEnergyStatsHandler,
+	getEnergyValuesHandler,
 	getTotalCustomersHandler,
 	getTotalEnergyCompensatedHandler,
 	getTotalEnergyConsumptionHandler,
@@ -49,6 +51,28 @@ async function metricRoutes(app: FastifyInstance) {
 			},
 		},
 		getTotalEnergyCompensatedHandler
+	);
+
+	app.get(
+		'/energy-stats',
+		{
+			schema: {
+				tags: ['Metrics'],
+				summary: 'Get energy stats.',
+			},
+		},
+		getEnergyStatsHandler
+	);
+
+	app.get(
+		'/energy-values',
+		{
+			schema: {
+				tags: ['Metrics'],
+				summary: 'Get energy values.',
+			},
+		},
+		getEnergyValuesHandler
 	);
 }
 
