@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
 import { ThemeProvider } from 'next-themes';
+
+import Footer from '@/components/footer';
 import { Header } from '@/components/header';
+import { ReactQueryProvider } from '@/providers/react-query-provider';
+
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,10 +29,13 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<div className='antialiased'>
-						<Header />
-						{children}
-					</div>
+					<ReactQueryProvider>
+						<div className='antialiased'>
+							<Header />
+							<main className='p-8 pt-6 flex'>{children}</main>
+							<Footer />
+						</div>
+					</ReactQueryProvider>
 				</ThemeProvider>
 			</body>
 		</html>
