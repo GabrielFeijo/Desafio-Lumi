@@ -1,23 +1,22 @@
 'use client';
 import { useState } from 'react';
-import { DateRange } from 'react-day-picker';
 import { useQuery } from '@tanstack/react-query';
-import { subDays } from 'date-fns';
-import { Loader2, XCircle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import {
 	CartesianGrid,
 	Legend,
+	LegendProps,
 	Line,
 	LineChart,
 	ResponsiveContainer,
 	Tooltip,
+	TooltipProps,
 	XAxis,
 	YAxis,
 } from 'recharts';
 import { emerald, red } from 'tailwindcss/colors';
 
 import { getEnergyValues } from '@/api/get-energy-values';
-import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardContent,
@@ -25,16 +24,78 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 
-import { CustomLegend } from './chart/custom-legend';
-import { CustomTooltip } from './chart/custom-tooltip';
+import ChartSelect from './chart/chart-select';
+import Loader from './chart/loader';
+import NoResult from './chart/no-result';
+
+const CustomLegend = (props: LegendProps) => {
+	const { payload } = props;
+	if (payload && payload.length) {
+		return (
+			<div className='flex justify-center'>
+				{payload?.map((entry, index) => (
+					<div
+						key={`item-${index}`}
+						className='flex items-center mx-2'
+					>
+						<div
+							style={{
+								backgroundColor: entry.color,
+								width: 10,
+								height: 10,
+								borderRadius: '50%',
+								marginRight: 5,
+							}}
+						></div>
+						<span>
+							{entry.value === 'consumedEnergyValue'
+								? 'Valor Consumido'
+								: 'Valor Compensado'}
+						</span>
+					</div>
+				))}
+			</div>
+		);
+	}
+
+	return null;
+};
+
+const CustomTooltip = ({
+	active,
+	payload,
+	label,
+}: TooltipProps<number, number>) => {
+	if (active && payload && payload.length) {
+		return (
+			<div className='flex flex-col gap-1 rounded-l border bg-card p-2 text-sm text-card-foreground shadow-sm items-center'>
+				<span className='font-semibold'>Mês: {label}</span>
+				{payload.map((item) => (
+					<div key={item.name}>
+						<span className='font-semibold'>
+							{item.dataKey === 'consumedEnergyValue'
+								? 'Consumido'
+								: 'Compensado'}
+						</span>
+						<span> | </span>
+						<span className='font-semibold'>
+							{item.value?.toLocaleString('pt-BR', {
+								style: 'currency',
+								currency: 'BRL',
+							})}
+						</span>
+					</div>
+				))}
+			</div>
+		);
+	}
+
+	return null;
+};
 
 export const EnergyValuesChart = () => {
-	const [period, setPeriod] = useState<DateRange | undefined>({
-		from: subDays(new Date(), 7),
-		to: new Date(),
-	});
+	const [selectedCustomer, setSelectedCustomer] = useState<string>('Todos');
 
 	const {
 		data: energyValuesData,
@@ -42,16 +103,20 @@ export const EnergyValuesChart = () => {
 		error: energyValuesError,
 	} = useQuery({
 		retry: false,
-		queryKey: ['metrics', 'energy-values', period],
-		queryFn: getEnergyValues,
+		queryKey: ['metrics', 'energy-values', selectedCustomer],
+		queryFn: () =>
+			getEnergyValues(
+				selectedCustomer !== 'Todos' ? selectedCustomer : undefined
+			),
 	});
 
-	function handleResetPeriod() {
-		setPeriod({
-			from: subDays(new Date(), 7),
-			to: new Date(),
-		});
-	}
+	const handleResetCustomer = () => {
+		setSelectedCustomer('Todos');
+	};
+
+	const handleChange = (value: string) => {
+		setSelectedCustomer(value);
+	};
 
 	return (
 		<Card className='col-span-6'>
@@ -68,9 +133,7 @@ export const EnergyValuesChart = () => {
 						brasileira)
 					</CardDescription>
 				</div>
-				<div className='flex items-center gap-3'>
-					<Label>Cliente</Label>
-				</div>
+				<ChartSelect handleChange={handleChange} />
 			</CardHeader>
 			<CardContent>
 				{energyValuesData ? (
@@ -136,40 +199,19 @@ export const EnergyValuesChart = () => {
 								</LineChart>
 							</ResponsiveContainer>
 						) : (
-							<div className='flex h-[240px] w-full flex-col items-center justify-center gap-0.5'>
-								<span className='text-sm text-muted-foreground'>
-									Nenhum resultado encontrado para o cliente escolhido.
-								</span>
-								<Button
-									variant='link'
-									size='default'
-									className='text-violet-500 dark:text-violet-400'
-									onClick={handleResetPeriod}
-								>
-									Exibir resultados todos os clientes
-								</Button>
-							</div>
+							<NoResult
+								text='Nenhum dado encontrado'
+								onClick={handleResetCustomer}
+							/>
 						)}
 					</>
 				) : energyValuesError ? (
-					<div className='flex h-[240px] w-full flex-col items-center justify-center gap-0.5'>
-						<span className='flex items-center gap-2 text-sm text-red-500 dark:text-red-400'>
-							<XCircle className='h-4 w-4' />
-							Erro ao obter dados do cliente.
-						</span>
-						<Button
-							variant='link'
-							size='default'
-							className='text-violet-500 dark:text-violet-400'
-							onClick={handleResetPeriod}
-						>
-							Recarregar gráfico
-						</Button>
-					</div>
+					<NoResult
+						text='Erro ao buscar dados'
+						onClick={handleResetCustomer}
+					/>
 				) : (
-					<div className='flex h-[240px] w-full items-center justify-center'>
-						<Loader2 className='h-8 w-8 animate-spin text-muted-foreground' />
-					</div>
+					<Loader />
 				)}
 			</CardContent>
 		</Card>

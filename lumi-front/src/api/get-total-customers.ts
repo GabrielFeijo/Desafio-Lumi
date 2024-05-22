@@ -1,12 +1,12 @@
 import { api } from '@/lib/axios';
 
-export interface GetCustomerTotalResponse {
+export interface GetTotalCustomersResponse {
 	total: number;
 	difference: number;
 }
 
 export async function getTotalCustomers() {
-	const response = await api.get<GetCustomerTotalResponse>(
+	const response = await api.get<GetTotalCustomersResponse>(
 		'/metrics/total-customers'
 	);
 	return response.data;
