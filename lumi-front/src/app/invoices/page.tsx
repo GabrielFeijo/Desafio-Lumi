@@ -1,7 +1,7 @@
-import React from 'react';
+import Title from '@/components/title';
 
 const InvoicesPage = () => {
-	return <p>InvoicesPage</p>;
+	return <Title>Faturas</Title>;
 };
 
 export default InvoicesPage;
