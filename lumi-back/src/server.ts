@@ -9,6 +9,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 import fastifyMultipart from '@fastify/multipart';
 import awsRoutes from './modules/Aws/aws.route';
 import { awsSchemas } from './modules/Aws/aws.schema';
+import metricRoutes from './modules/Metrics/metrics.route';
 
 export const app = fastify();
 
@@ -57,6 +58,7 @@ async function main() {
 		app.swagger();
 	});
 
+	app.register(metricRoutes, { prefix: 'api/metrics' });
 	app.register(customerRoutes, { prefix: 'api/customers' });
 	app.register(invoiceRoutes, { prefix: 'api/invoices' });
 	app.register(awsRoutes, { prefix: 'api/s3' });
