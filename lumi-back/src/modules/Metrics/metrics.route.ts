@@ -1,16 +1,30 @@
 import { FastifyInstance } from 'fastify';
-import { getInvoiceTotal } from './metrics.service';
+import {
+	getTotalCustomersHandler,
+	getTotalInvoicesHandler,
+} from './metrics.controller';
 
 async function metricRoutes(app: FastifyInstance) {
 	app.get(
-		'/invoice-total',
+		'/total-invoices',
 		{
 			schema: {
 				tags: ['Metrics'],
-				summary: 'Get invoice total',
+				summary: 'Get total number of invoices.',
 			},
 		},
-		getInvoiceTotal
+		getTotalInvoicesHandler
+	);
+
+	app.get(
+		'/total-customers',
+		{
+			schema: {
+				tags: ['Metrics'],
+				summary: 'Get total number of customers.',
+			},
+		},
+		getTotalCustomersHandler
 	);
 }
 

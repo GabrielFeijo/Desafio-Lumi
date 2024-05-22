@@ -2,18 +2,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, Newspaper } from 'lucide-react';
 
-import { getInvoiceTotal } from '@/api/get-invoice-total';
+import { getTotalInvoices } from '@/api/get-total-invoices';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { CardSkeleton } from './card-skeleton';
 
 export function InvoiceCounter() {
 	const { data, isFetching: isLoading } = useQuery({
-		queryKey: ['metrics', 'month-receipt'],
-		queryFn: getInvoiceTotal,
+		queryKey: ['metrics', 'invoice-total'],
+		queryFn: getTotalInvoices,
 	});
-
-	console.log(data);
 
 	return (
 		<Card>

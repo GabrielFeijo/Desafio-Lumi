@@ -5,11 +5,10 @@ export interface GetInvoiceTotalResponse {
 	difference: number;
 }
 
-export async function getInvoiceTotal() {
+export async function getTotalInvoices() {
 	const response = await api.get<GetInvoiceTotalResponse>(
-		'/metrics/invoice-total'
+		'/metrics/total-invoices'
 	);
-	console.log(response);
 
 	return response.data;
 }

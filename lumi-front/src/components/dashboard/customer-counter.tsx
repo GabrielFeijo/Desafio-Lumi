@@ -1,13 +1,17 @@
+'use client';
+import { useQuery } from '@tanstack/react-query';
 import { Loader2, Users } from 'lucide-react';
 
+import { getTotalCustomers } from '@/api/get-total-customers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { CardSkeleton } from './card-skeleton';
 
 export function CustomerCounter() {
-	const isLoading = false;
-
-	const data = 10;
+	const { data, isFetching: isLoading } = useQuery({
+		queryKey: ['metrics', 'customer-total'],
+		queryFn: getTotalCustomers,
+	});
 
 	return (
 		<Card>
@@ -24,7 +28,18 @@ export function CustomerCounter() {
 			<CardContent className='space-y-1'>
 				{data ? (
 					<>
-						<span className='text-2xl font-bold'>{data}</span>
+						<span className='text-2xl font-bold'>{data.total}</span>
+
+						<p className='text-xs text-muted-foreground'>
+							<span
+								className={`${
+									data.difference > 0 ? 'text-emerald-500' : 'text-red-500'
+								}`}
+							>
+								{data.difference > 0 ? `+${data.difference}` : data.difference}
+							</span>{' '}
+							em relação ao mês passado
+						</p>
 					</>
 				) : (
 					<CardSkeleton />
