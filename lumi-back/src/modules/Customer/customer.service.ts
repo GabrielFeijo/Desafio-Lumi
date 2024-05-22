@@ -18,3 +18,9 @@ export async function getCustomerByCustomerId(customerNumber: bigint) {
 
 	return customer;
 }
+
+export async function getCustomers() {
+	const customer = await db.customer.findMany();
+
+	return customer;
+}

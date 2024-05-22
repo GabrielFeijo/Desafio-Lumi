@@ -16,16 +16,19 @@ const createCustomerSchema = z.object({
 	...customerCore,
 });
 
-const createCustomerResponseSchema = z.object({
+const singleCustomerResponseSchema = z.object({
 	id: z.string().cuid(),
 	...customerCore,
 	createdAt: z.string(),
 	updatedAt: z.string(),
 });
 
+const customersResponseSchema = z.array(singleCustomerResponseSchema);
+
 export type CreateCustomerInput = z.infer<typeof createCustomerSchema>;
 
 export const { schemas: customerSchemas, $ref } = buildJsonSchemas({
 	createCustomerSchema,
-	createCustomerResponseSchema,
+	singleCustomerResponseSchema,
+	customersResponseSchema,
 });

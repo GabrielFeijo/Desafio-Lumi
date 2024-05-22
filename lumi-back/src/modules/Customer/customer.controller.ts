@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { CreateCustomerInput } from './customer.schema';
-import { createCustomer } from './customer.service';
+import { createCustomer, getCustomers } from './customer.service';
 
 export async function registerCustomerHandler(
 	request: FastifyRequest<{ Body: CreateCustomerInput }>,
@@ -12,6 +12,23 @@ export async function registerCustomerHandler(
 		const customer = await createCustomer(body);
 
 		return reply.status(201).send(customer);
+	} catch (error) {
+		console.error(error);
+		return reply.status(500).send({
+			message: 'Something went wrong',
+			error: error,
+		});
+	}
+}
+
+export async function getCustomersHandler(
+	_: FastifyRequest,
+	reply: FastifyReply
+) {
+	try {
+		const customer = await getCustomers();
+
+		return reply.status(200).send(customer);
 	} catch (error) {
 		console.error(error);
 		return reply.status(500).send({
