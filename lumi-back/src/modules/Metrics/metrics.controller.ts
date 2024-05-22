@@ -7,6 +7,7 @@ import {
 	getTotalEnergyConsumption,
 	getTotalInvoices,
 } from './metrics.service';
+import { EnergyRequest } from './metrics.schema';
 
 export async function getTotalInvoicesHandler(
 	_: FastifyRequest,
@@ -77,11 +78,12 @@ export async function getTotalEnergyCompensatedHandler(
 }
 
 export async function getEnergyStatsHandler(
-	_: FastifyRequest,
+	request: FastifyRequest<{ Querystring: EnergyRequest }>,
 	reply: FastifyReply
 ) {
 	try {
-		const data = await getEnergyStats();
+		const { customerNumber } = request.query;
+		const data = await getEnergyStats(customerNumber);
 
 		return reply.status(200).send(data);
 	} catch (error) {
@@ -94,11 +96,12 @@ export async function getEnergyStatsHandler(
 }
 
 export async function getEnergyValuesHandler(
-	_: FastifyRequest,
+	request: FastifyRequest<{ Querystring: EnergyRequest }>,
 	reply: FastifyReply
 ) {
 	try {
-		const data = await getEnergyValues();
+		const { customerNumber } = request.query;
+		const data = await getEnergyValues(customerNumber);
 
 		return reply.status(200).send(data);
 	} catch (error) {

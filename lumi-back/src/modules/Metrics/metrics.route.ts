@@ -59,6 +59,13 @@ async function metricRoutes(app: FastifyInstance) {
 			schema: {
 				tags: ['Metrics'],
 				summary: 'Get energy stats.',
+				querystring: {
+					type: 'object',
+					properties: {
+						customerNumber: { type: 'string' },
+					},
+					required: [],
+				},
 			},
 		},
 		getEnergyStatsHandler
@@ -70,6 +77,13 @@ async function metricRoutes(app: FastifyInstance) {
 			schema: {
 				tags: ['Metrics'],
 				summary: 'Get energy values.',
+				querystring: {
+					type: 'object',
+					properties: {
+						customerNumber: { type: 'string' },
+					},
+					required: [],
+				},
 			},
 		},
 		getEnergyValuesHandler

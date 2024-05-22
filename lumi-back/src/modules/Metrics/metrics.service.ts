@@ -102,14 +102,18 @@ export async function getTotalEnergyCompensated(): Promise<{
 	return { total };
 }
 
-export async function getEnergyStats(): Promise<
+export async function getEnergyStats(customerNumber?: bigint): Promise<
 	{
 		referenceMonth: string;
 		energyConsumption: number;
 		energyCompensated: number;
 	}[]
 > {
-	const invoices: Invoice[] = await db.invoice.findMany();
+	const invoices: Invoice[] = await db.invoice.findMany({
+		where: {
+			customerId: customerNumber,
+		},
+	});
 
 	const energyStats: Record<
 		string,
@@ -149,14 +153,18 @@ export async function getEnergyStats(): Promise<
 	return data;
 }
 
-export async function getEnergyValues(): Promise<
+export async function getEnergyValues(customerNumber?: bigint): Promise<
 	{
 		referenceMonth: string;
 		consumedEnergyValue: number;
 		compensatedEnergyValue: number;
 	}[]
 > {
-	const invoices: Invoice[] = await db.invoice.findMany();
+	const invoices: Invoice[] = await db.invoice.findMany({
+		where: {
+			customerId: customerNumber,
+		},
+	});
 
 	const energyStats: Record<
 		string,
