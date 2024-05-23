@@ -11,18 +11,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { defaultSelectOption } from '@/constants/default-select-option';
-
-function capitalizeFirstTwoWords(sentence: string) {
-	const words = sentence.split(' ');
-
-	const firstTwoWords = words.slice(0, 2);
-
-	const capitalizedWords = firstTwoWords.map((word) => {
-		return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-	});
-
-	return capitalizedWords.join(' ');
-}
+import { capitalizeWords } from '@/utils/capitalize-words';
 
 const ChartSelect = ({
 	handleChange,
@@ -46,7 +35,7 @@ const ChartSelect = ({
 				...customers.map((customer) => {
 					return {
 						value: String(customer.customerNumber),
-						label: capitalizeFirstTwoWords(customer.name),
+						label: capitalizeWords(customer.name),
 					};
 				}),
 			]);
