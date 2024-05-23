@@ -80,6 +80,11 @@ const singleInvoiceResponseSchemaWithCustomer = z.object({
 
 const invoicesResponseSchema = z.object({
 	invoices: z.array(singleInvoiceResponseSchema),
+	meta: z.object({
+		pageIndex: z.number(),
+		totalCount: z.number(),
+		perPage: z.number(),
+	}),
 });
 
 export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;

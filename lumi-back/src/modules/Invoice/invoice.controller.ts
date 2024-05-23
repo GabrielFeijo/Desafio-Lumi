@@ -25,9 +25,31 @@ export async function createInvoiceHandler(
 	}
 }
 
-export async function getInvoicesHandler() {
-	const invoices = await getInvoices();
-	return invoices;
+export async function getInvoicesHandler(
+	request: FastifyRequest<{
+		Querystring: {
+			pageIndex: number;
+			customerNumber?: string;
+			referenceMonth?: string;
+		};
+	}>,
+	reply: FastifyReply
+) {
+	const { pageIndex, customerNumber, referenceMonth } = request.query;
+	try {
+		const invoices = await getInvoices(
+			pageIndex,
+			customerNumber,
+			referenceMonth
+		);
+		return reply.status(200).send(invoices);
+	} catch (error) {
+		console.error(error);
+		return reply.status(500).send({
+			message: 'Something went wrong',
+			error: error,
+		});
+	}
 }
 
 export async function uploadFileHandler(

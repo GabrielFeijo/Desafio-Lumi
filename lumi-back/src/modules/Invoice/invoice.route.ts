@@ -46,6 +46,15 @@ async function invoiceRoutes(app: FastifyInstance) {
 				response: {
 					200: $ref('invoicesResponseSchema'),
 				},
+				querystring: {
+					type: 'object',
+					properties: {
+						pageIndex: { type: 'number' },
+						customerNumber: { type: 'string' },
+						referenceMonth: { type: 'string' },
+					},
+					required: ['pageIndex'],
+				},
 			},
 		},
 		getInvoicesHandler

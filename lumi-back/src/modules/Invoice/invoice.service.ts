@@ -18,6 +18,7 @@ import {
 } from '../Customer/customer.service';
 import { transformToDate } from '../../utils/transform-to-date';
 import { uploadFile } from '../Aws/aws.service';
+import { Prisma } from '@prisma/client';
 
 export async function createInvoice(data: CreateInvoiceInput) {
 	const invoice = await db.invoice.create({
@@ -27,8 +28,38 @@ export async function createInvoice(data: CreateInvoiceInput) {
 	return invoice;
 }
 
-export async function getInvoices() {
+interface InvoiceFilters {
+	customerId?: bigint;
+	referenceMonth?: Prisma.StringFilter;
+}
+
+export async function getInvoices(
+	pageIndex = 0,
+	customerNumber?: string,
+	referenceMonth?: string
+) {
+	const perPage = 10;
+
+	const whereClause: InvoiceFilters = {
+		...(customerNumber && {
+			customerId: BigInt(customerNumber),
+		}),
+		...(referenceMonth && {
+			referenceMonth: {
+				contains: referenceMonth,
+				mode: 'insensitive',
+			},
+		}),
+	};
+
+	const totalCount = await db.invoice.count({
+		where: whereClause,
+	});
+
 	const invoices = await db.invoice.findMany({
+		where: whereClause,
+		skip: pageIndex * perPage,
+		take: perPage,
 		include: {
 			customer: {
 				select: {
@@ -39,7 +70,13 @@ export async function getInvoices() {
 		},
 	});
 
-	return { invoices };
+	const meta = {
+		pageIndex,
+		totalCount,
+		perPage,
+	};
+
+	return { invoices, meta };
 }
 
 export async function getInvoicesByCustomerNumberAndReferenceMonth({
