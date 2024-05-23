@@ -42,7 +42,7 @@ const swaggerOptions = {
 };
 
 const swaggerUiOptions = {
-	routePrefix: '/docs',
+	routePrefix: 'api/docs',
 	exposeRoute: true,
 };
 

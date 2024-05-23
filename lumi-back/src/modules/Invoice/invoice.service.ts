@@ -17,8 +17,10 @@ import {
 	getCustomerByCustomerId,
 } from '../Customer/customer.service';
 import { transformToDate } from '../../utils/transform-to-date';
-import { uploadFile } from '../Aws/aws.service';
+import { deleteFile, uploadFile } from '../Aws/aws.service';
 import { Prisma } from '@prisma/client';
+import { extractFilename } from '../../utils/extract-filename';
+import { ApiError } from '../../../apiError';
 
 export async function createInvoice(data: CreateInvoiceInput) {
 	const invoice = await db.invoice.create({
@@ -157,5 +159,37 @@ export async function processPDFUpload(part: MultipartFile) {
 		});
 
 		return invoice;
+	}
+}
+
+export async function deleteInvoice(id: string) {
+	try {
+		const existingInvoice = await db.invoice.findUnique({
+			where: {
+				id,
+			},
+		});
+
+		if (!existingInvoice) {
+			throw new ApiError(404, 'Invoice not found');
+		}
+
+		const fileName = extractFilename(existingInvoice.pdfUrl);
+
+		const deletedFile = await deleteFile(fileName);
+
+		console.log(deletedFile);
+
+		const deletedInvoice = await db.invoice.delete({
+			where: {
+				id,
+			},
+		});
+
+		console.log(deletedInvoice);
+
+		return deletedInvoice;
+	} catch (error) {
+		return error;
 	}
 }

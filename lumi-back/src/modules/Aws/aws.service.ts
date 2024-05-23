@@ -47,7 +47,7 @@ export async function deleteFile(filename: string) {
 	});
 
 	try {
-		await s3.send(deleteObjectCommand);
+		return await s3.send(deleteObjectCommand);
 	} catch (error) {
 		console.error('Error deleting file from S3:', error);
 		throw new Error('Failed to delete file from S3');

@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { $ref } from './invoice.schema';
 import {
 	createInvoiceHandler,
+	deleteInvoiceHandler,
 	getInvoicesHandler,
 	uploadFileHandler,
 } from './invoice.controller';
@@ -30,7 +31,7 @@ async function invoiceRoutes(app: FastifyInstance) {
 				summary: 'Extract invoice data from PDF',
 				consumes: ['multipart/form-data'],
 				response: {
-					201: $ref('singleInvoiceResponseSchemaWithCustomer'),
+					201: $ref('singleInvoiceResponseSchema'),
 				},
 			},
 		},
@@ -58,6 +59,20 @@ async function invoiceRoutes(app: FastifyInstance) {
 			},
 		},
 		getInvoicesHandler
+	);
+
+	app.delete(
+		'/:id',
+		{
+			schema: {
+				tags: ['Invoices'],
+				summary: 'Delete an invoice by id.',
+				response: {
+					200: $ref('singleInvoiceResponseSchemaWithOutCustomer'),
+				},
+			},
+		},
+		deleteInvoiceHandler
 	);
 }
 

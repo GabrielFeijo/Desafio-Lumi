@@ -1,10 +1,12 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { CreateInvoiceInput } from './invoice.schema';
+import { CreateInvoiceInput, ParamsSchema } from './invoice.schema';
 import {
 	createInvoice,
+	deleteInvoice,
 	getInvoices,
 	processPDFUpload,
 } from './invoice.service';
+import { ApiError } from '../../../apiError';
 
 export async function createInvoiceHandler(
 	request: FastifyRequest<{ Body: CreateInvoiceInput }>,
@@ -78,6 +80,28 @@ export async function uploadFileHandler(
 
 		return reply.status(500).send({
 			message: 'Something went wrong',
+		});
+	}
+}
+
+export async function deleteInvoiceHandler(
+	request: FastifyRequest<{ Params: ParamsSchema }>,
+	reply: FastifyReply
+) {
+	const { id } = request.params;
+	try {
+		const deletedInvoice = await deleteInvoice(id);
+
+		return reply.status(200).send(deletedInvoice);
+	} catch (error) {
+		if (error instanceof ApiError) {
+			return reply.status(error.statusCode).send({
+				error: error.message,
+			});
+		}
+		return reply.status(500).send({
+			message: 'Something went wrong',
+			error: error,
 		});
 	}
 }
