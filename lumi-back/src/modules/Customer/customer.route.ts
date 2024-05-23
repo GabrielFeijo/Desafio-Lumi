@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { $ref } from './customer.schema';
 import {
+	deleteCustomerHandler,
 	getCustomersHandler,
 	registerCustomerHandler,
 } from './customer.controller';
@@ -33,6 +34,20 @@ async function customerRoutes(app: FastifyInstance) {
 			},
 		},
 		getCustomersHandler
+	);
+
+	app.delete(
+		'/:id',
+		{
+			schema: {
+				tags: ['Customers'],
+				summary: 'Delete customer by id.',
+				response: {
+					200: $ref('singleCustomerResponseSchema'),
+				},
+			},
+		},
+		deleteCustomerHandler
 	);
 }
 

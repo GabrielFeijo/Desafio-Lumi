@@ -176,7 +176,7 @@ export async function deleteInvoice(id: string) {
 
 		const fileName = extractFilename(existingInvoice.pdfUrl);
 
-		const deletedFile = await deleteFile(fileName);
+		await deleteFile(fileName);
 
 		const deletedInvoice = await db.invoice.delete({
 			where: {
