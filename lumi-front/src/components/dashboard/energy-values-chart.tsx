@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
 	CartesianGrid,
 	Legend,
@@ -24,6 +25,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import { defaultSelectOption } from '@/constants/default-select-option';
 
 import ChartSelect from './chart/chart-select';
 import Loader from './chart/loader';
@@ -95,7 +97,12 @@ const CustomTooltip = ({
 };
 
 export const EnergyValuesChart = () => {
-	const [selectedCustomer, setSelectedCustomer] = useState<string>('Todos');
+	const searchParams = useSearchParams()!;
+	const { replace } = useRouter();
+	const pathname = usePathname();
+
+	const selectedCustomer =
+		searchParams.get('vCustomer') || defaultSelectOption.value;
 
 	const {
 		data: energyValuesData,
@@ -106,17 +113,33 @@ export const EnergyValuesChart = () => {
 		queryKey: ['metrics', 'energy-values', selectedCustomer],
 		queryFn: () =>
 			getEnergyValues(
-				selectedCustomer !== 'Todos' ? selectedCustomer : undefined
+				selectedCustomer !== defaultSelectOption.value
+					? selectedCustomer
+					: undefined
 			),
 	});
 
 	const handleResetCustomer = () => {
-		setSelectedCustomer('Todos');
+		setQueryString('vCustomer', defaultSelectOption.value);
 	};
 
 	const handleChange = (value: string) => {
-		setSelectedCustomer(value);
+		setQueryString('vCustomer', value);
 	};
+
+	const setQueryString = useCallback(
+		(name: string, value: string) => {
+			const params = new URLSearchParams(searchParams);
+			if (value) {
+				params.set(name, value);
+			} else {
+				params.delete(name);
+			}
+
+			replace(`${pathname}?${params.toString()}`);
+		},
+		[pathname, replace, searchParams]
+	);
 
 	return (
 		<Card className='col-span-6'>
@@ -133,7 +156,10 @@ export const EnergyValuesChart = () => {
 						brasileira)
 					</CardDescription>
 				</div>
-				<ChartSelect handleChange={handleChange} />
+				<ChartSelect
+					handleChange={handleChange}
+					value={selectedCustomer}
+				/>
 			</CardHeader>
 			<CardContent>
 				{energyValuesData ? (

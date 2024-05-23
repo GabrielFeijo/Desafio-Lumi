@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
 	CartesianGrid,
 	Legend,
@@ -24,6 +25,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import { defaultSelectOption } from '@/constants/default-select-option';
 
 import ChartSelect from './chart/chart-select';
 import Loader from './chart/loader';
@@ -90,7 +92,12 @@ const CustomTooltip = ({
 };
 
 export const EnergyStatsChart = () => {
-	const [selectedCustomer, setSelectedCustomer] = useState<string>('Todos');
+	const searchParams = useSearchParams()!;
+	const { replace } = useRouter();
+	const pathname = usePathname();
+
+	const selectedCustomer =
+		searchParams.get('sCustomer') || defaultSelectOption.value;
 
 	const {
 		data: energyStatsData,
@@ -101,16 +108,32 @@ export const EnergyStatsChart = () => {
 		queryKey: ['metrics', 'energy-stats', selectedCustomer],
 		queryFn: () =>
 			getEnergyStats(
-				selectedCustomer !== 'Todos' ? selectedCustomer : undefined
+				selectedCustomer !== defaultSelectOption.value
+					? selectedCustomer
+					: undefined
 			),
 	});
 
+	const setQueryString = useCallback(
+		(name: string, value: string) => {
+			const params = new URLSearchParams(searchParams);
+			if (value) {
+				params.set(name, value);
+			} else {
+				params.delete(name);
+			}
+
+			replace(`${pathname}?${params.toString()}`);
+		},
+		[pathname, replace, searchParams]
+	);
+
 	const handleResetCustomer = () => {
-		setSelectedCustomer('Todos');
+		setQueryString('sCustomer', defaultSelectOption.value);
 	};
 
 	const handleChange = (value: string) => {
-		setSelectedCustomer(value);
+		setQueryString('sCustomer', value);
 	};
 
 	return (
@@ -127,7 +150,10 @@ export const EnergyStatsChart = () => {
 						<span className={'text-emerald-500'}>Kwh</span> - (Kilowatt-hora)
 					</CardDescription>
 				</div>
-				<ChartSelect handleChange={handleChange} />
+				<ChartSelect
+					handleChange={handleChange}
+					value={selectedCustomer}
+				/>
 			</CardHeader>
 			<CardContent>
 				{energyStatsData ? (

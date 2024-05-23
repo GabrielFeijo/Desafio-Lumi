@@ -10,6 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { defaultSelectOption } from '@/constants/default-select-option';
 
 function capitalizeFirstTwoWords(sentence: string) {
 	const words = sentence.split(' ');
@@ -25,10 +26,12 @@ function capitalizeFirstTwoWords(sentence: string) {
 
 const ChartSelect = ({
 	handleChange,
+	value,
 }: {
 	handleChange: (value: string) => void;
+	value: string;
 }) => {
-	const [options, setOptions] = useState([{ value: 'Todos', label: 'Todos' }]);
+	const [options, setOptions] = useState([defaultSelectOption]);
 
 	const { data: customers } = useQuery({
 		retry: false,
@@ -38,8 +41,8 @@ const ChartSelect = ({
 
 	useEffect(() => {
 		if (customers) {
-			setOptions([
-				{ value: 'Todos', label: 'Todos' },
+			setOptions((prevOptions) => [
+				...prevOptions,
 				...customers.map((customer) => {
 					return {
 						value: String(customer.customerNumber),
@@ -53,9 +56,12 @@ const ChartSelect = ({
 	return (
 		<div className='flex items-center gap-2'>
 			<Label>Cliente:</Label>
-			<Select onValueChange={handleChange}>
+			<Select
+				onValueChange={handleChange}
+				value={value}
+			>
 				<SelectTrigger>
-					<SelectValue placeholder='Todos' />
+					<SelectValue placeholder='Escolha um cliente' />
 				</SelectTrigger>
 				<SelectContent>
 					{options.map((option) => (
