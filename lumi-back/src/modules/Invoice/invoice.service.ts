@@ -178,15 +178,11 @@ export async function deleteInvoice(id: string) {
 
 		const deletedFile = await deleteFile(fileName);
 
-		console.log(deletedFile);
-
 		const deletedInvoice = await db.invoice.delete({
 			where: {
 				id,
 			},
 		});
-
-		console.log(deletedInvoice);
 
 		return deletedInvoice;
 	} catch (error) {
