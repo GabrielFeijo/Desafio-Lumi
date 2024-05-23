@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import { Search, X } from 'lucide-react';

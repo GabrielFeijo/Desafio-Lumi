@@ -24,6 +24,11 @@ export interface Invoice {
 }
 export type GetInvoicesResponse = {
 	invoices: Array<Invoice>;
+	meta: {
+		pageIndex: number;
+		totalCount: number;
+		perPage: number;
+	};
 };
 
 export async function getInvoices({
@@ -35,8 +40,6 @@ export async function getInvoices({
 	customerNumber?: string;
 	referenceMonth?: string;
 }) {
-	console.log(customerNumber, referenceMonth, pageIndex);
-
 	const response = await api.get<GetInvoicesResponse>('/invoices', {
 		params: {
 			pageIndex,
