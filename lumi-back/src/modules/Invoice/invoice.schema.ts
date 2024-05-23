@@ -78,7 +78,9 @@ const singleInvoiceResponseSchemaWithCustomer = z.object({
 	...invoiceCore,
 });
 
-const invoicesResponseSchema = z.array(singleInvoiceResponseSchema);
+const invoicesResponseSchema = z.object({
+	invoices: z.array(singleInvoiceResponseSchema),
+});
 
 export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;
 

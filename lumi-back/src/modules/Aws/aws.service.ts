@@ -12,12 +12,22 @@ const s3 = new S3Client({
 	},
 });
 
-export async function uploadFile(dataBuffer: Buffer, filename: string) {
+export async function uploadFile({
+	dataBuffer,
+	filename,
+	mimetype,
+}: {
+	dataBuffer: Buffer;
+	filename: string;
+	mimetype: string;
+}) {
 	const putObjectCommand = new PutObjectCommand({
 		Bucket: process.env.AWS_BUCKET_NAME || '',
 		Key: filename,
 		Body: dataBuffer,
 		ACL: 'public-read',
+		ContentDisposition: 'inline',
+		ContentType: mimetype,
 	});
 
 	try {

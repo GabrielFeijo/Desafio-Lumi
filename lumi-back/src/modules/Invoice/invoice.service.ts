@@ -39,7 +39,7 @@ export async function getInvoices() {
 		},
 	});
 
-	return invoices;
+	return { invoices };
 }
 
 export async function getInvoicesByCustomerNumberAndReferenceMonth({
@@ -94,7 +94,11 @@ export async function processPDFUpload(part: MultipartFile) {
 
 		const renamedValues = transformValues(sequencialValues);
 
-		const url = await uploadFile(pdfBuffer, part.filename);
+		const url = await uploadFile({
+			dataBuffer: pdfBuffer,
+			filename: part.filename,
+			mimetype: part.mimetype,
+		});
 
 		let customer = await getCustomerByCustomerId(BigInt(customerNumber));
 

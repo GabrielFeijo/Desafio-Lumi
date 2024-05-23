@@ -21,7 +21,11 @@ export async function uploadFileToS3Handler(
 				buffers.push(chunk);
 			}
 
-			const url = await uploadFile(Buffer.concat(buffers), part.filename);
+			const url = await uploadFile({
+				dataBuffer: Buffer.concat(buffers),
+				filename: part.filename,
+				mimetype: part.mimetype,
+			});
 			return reply.status(200).send(url);
 		}
 	} catch (error) {
