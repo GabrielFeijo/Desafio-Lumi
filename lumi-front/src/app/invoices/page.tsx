@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { z } from 'zod';
 
 import { getInvoices } from '@/api/get-invoices';
+import { InvoiceTableFilters } from '@/components/invoices/invoice-table-filters';
 import { InvoiceTableRow } from '@/components/invoices/invoice-table-row';
 import { InvoicesTableSkeleton } from '@/components/invoices/invoices-table-skeleton';
 import Title from '@/components/title';
@@ -52,6 +53,7 @@ const InvoicesPage = () => {
 					)}
 				</div>
 				<div className='space-y-2.5'>
+					<InvoiceTableFilters />
 					<div className='rounded-md border'>
 						<Table>
 							<TableHeader>

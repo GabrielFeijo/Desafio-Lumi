@@ -35,7 +35,15 @@ export async function getInvoices({
 	customerNumber?: string;
 	referenceMonth?: string;
 }) {
-	const response = await api.get<GetInvoicesResponse>('/invoices');
+	console.log(customerNumber, referenceMonth, pageIndex);
+
+	const response = await api.get<GetInvoicesResponse>('/invoices', {
+		params: {
+			pageIndex,
+			customerNumber,
+			referenceMonth,
+		},
+	});
 
 	return response.data;
 }
