@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { CustomerCounter } from '@/components/dashboard/customer-counter';
 import { EnergyStatsChart } from '@/components/dashboard/energy-stats-chart';
 import { EnergyValuesChart } from '@/components/dashboard/energy-values-chart';
@@ -18,8 +20,10 @@ export default function Home() {
 				<TotalEnergyCompensated />
 			</div>
 
-			<EnergyStatsChart />
-			<EnergyValuesChart />
+			<Suspense>
+				<EnergyStatsChart />
+				<EnergyValuesChart />
+			</Suspense>
 		</section>
 	);
 }
