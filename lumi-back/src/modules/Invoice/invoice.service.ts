@@ -127,7 +127,7 @@ export async function processPDFUpload(
 			});
 
 			if (existingFile) {
-				throw new Error('Invoice already exists');
+				throw new ApiError(409, 'Invoice already exists');
 			}
 
 			const sequencialValues = extractSequentialValues(
