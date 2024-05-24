@@ -56,8 +56,8 @@ const extractSequentialValues = (
 			const adjustedY = y + index * spacing;
 			const item = content.find(
 				(item) =>
-					Math.abs(item.x - x) < 6 &&
-					Math.abs(item.y - adjustedY) < 6 &&
+					Math.abs(item.x - x) < 9 &&
+					Math.abs(item.y - adjustedY) < 9 &&
 					item.width > 0
 			);
 

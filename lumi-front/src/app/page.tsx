@@ -20,10 +20,8 @@ export default function Home() {
 				<TotalEnergyCompensated />
 			</div>
 
-			<Suspense>
-				<EnergyStatsChart />
-				<EnergyValuesChart />
-			</Suspense>
+			<EnergyStatsChart />
+			<EnergyValuesChart />
 		</section>
 	);
 }

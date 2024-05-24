@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { $ref } from './invoice.schema';
 import {
 	createInvoiceHandler,
+	deleteInvoiceHandler,
 	getInvoicesHandler,
 	uploadFileHandler,
 } from './invoice.controller';
@@ -15,7 +16,7 @@ async function invoiceRoutes(app: FastifyInstance) {
 				summary: 'Create invoice',
 				body: $ref('createInvoiceSchema'),
 				response: {
-					201: $ref('singleInvoiceResponseSchema'),
+					201: $ref('singleInvoiceResponseSchemaWithOutCustomer'),
 				},
 			},
 		},
@@ -29,8 +30,9 @@ async function invoiceRoutes(app: FastifyInstance) {
 				tags: ['Invoices'],
 				summary: 'Extract invoice data from PDF',
 				consumes: ['multipart/form-data'],
+
 				response: {
-					201: $ref('singleInvoiceResponseSchemaWithCustomer'),
+					201: $ref('manyInvoicesResponseSchemaWithOutCustomer'),
 				},
 			},
 		},
@@ -46,9 +48,32 @@ async function invoiceRoutes(app: FastifyInstance) {
 				response: {
 					200: $ref('invoicesResponseSchema'),
 				},
+				querystring: {
+					type: 'object',
+					properties: {
+						pageIndex: { type: 'number' },
+						customerNumber: { type: 'string' },
+						referenceMonth: { type: 'string' },
+					},
+					required: ['pageIndex'],
+				},
 			},
 		},
 		getInvoicesHandler
+	);
+
+	app.delete(
+		'/:id',
+		{
+			schema: {
+				tags: ['Invoices'],
+				summary: 'Delete an invoice by id.',
+				response: {
+					200: $ref('singleInvoiceResponseSchemaWithOutCustomer'),
+				},
+			},
+		},
+		deleteInvoiceHandler
 	);
 }
 

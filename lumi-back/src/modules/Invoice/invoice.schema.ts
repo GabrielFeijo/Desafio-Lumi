@@ -73,21 +73,40 @@ const singleInvoiceResponseSchema = z.object({
 	customer: z.object({ name: z.string(), id: z.string().cuid() }),
 });
 
-const singleInvoiceResponseSchemaWithCustomer = z.object({
+const singleInvoiceResponseSchemaWithOutCustomer = z.object({
 	...invoiceGenerated,
 	...invoiceCore,
 });
 
-const invoicesResponseSchema = z.array(singleInvoiceResponseSchema);
+const manyInvoicesResponseSchemaWithOutCustomer = z.object({
+	invoices: z.array(singleInvoiceResponseSchemaWithOutCustomer),
+});
+
+const invoicesResponseSchema = z.object({
+	invoices: z.array(singleInvoiceResponseSchema),
+	meta: z.object({
+		pageIndex: z.number(),
+		totalCount: z.number(),
+		perPage: z.number(),
+	}),
+});
 
 export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;
+
+const paramsSchema = z.object({
+	id: z.string(),
+});
+
+export type ParamsSchema = z.infer<typeof paramsSchema>;
 
 export const { schemas: invoiceSchemas, $ref } = buildJsonSchemas(
 	{
 		createInvoiceSchema,
 		singleInvoiceResponseSchema,
-		singleInvoiceResponseSchemaWithCustomer,
+		singleInvoiceResponseSchemaWithOutCustomer,
+		manyInvoicesResponseSchemaWithOutCustomer,
 		invoicesResponseSchema,
+		paramsSchema,
 	},
 	{
 		$id: 'invoiceSchemas',

@@ -17,7 +17,10 @@ import {
 	getCustomerByCustomerId,
 } from '../Customer/customer.service';
 import { transformToDate } from '../../utils/transform-to-date';
-import { uploadFile } from '../Aws/aws.service';
+import { deleteFile, uploadFile } from '../Aws/aws.service';
+import { Prisma } from '@prisma/client';
+import { extractFilename } from '../../utils/extract-filename';
+import { ApiError } from '../../../apiError';
 
 export async function createInvoice(data: CreateInvoiceInput) {
 	const invoice = await db.invoice.create({
@@ -27,8 +30,38 @@ export async function createInvoice(data: CreateInvoiceInput) {
 	return invoice;
 }
 
-export async function getInvoices() {
+interface InvoiceFilters {
+	customerId?: bigint;
+	referenceMonth?: Prisma.StringFilter;
+}
+
+export async function getInvoices(
+	pageIndex = 0,
+	customerNumber?: string,
+	referenceMonth?: string
+) {
+	const perPage = 10;
+
+	const whereClause: InvoiceFilters = {
+		...(customerNumber && {
+			customerId: BigInt(customerNumber),
+		}),
+		...(referenceMonth && {
+			referenceMonth: {
+				contains: referenceMonth,
+				mode: 'insensitive',
+			},
+		}),
+	};
+
+	const totalCount = await db.invoice.count({
+		where: whereClause,
+	});
+
 	const invoices = await db.invoice.findMany({
+		where: whereClause,
+		skip: pageIndex * perPage,
+		take: perPage,
 		include: {
 			customer: {
 				select: {
@@ -39,7 +72,13 @@ export async function getInvoices() {
 		},
 	});
 
-	return invoices;
+	const meta = {
+		pageIndex,
+		totalCount,
+		perPage,
+	};
+
+	return { invoices, meta };
 }
 
 export async function getInvoicesByCustomerNumberAndReferenceMonth({
@@ -59,62 +98,101 @@ export async function getInvoicesByCustomerNumberAndReferenceMonth({
 	return invoice;
 }
 
-export async function processPDFUpload(part: MultipartFile) {
-	if (part.file) {
-		const buffers = [];
-		for await (const chunk of part.file) {
-			buffers.push(chunk);
-		}
+export async function processPDFUpload(
+	parts: AsyncIterableIterator<MultipartFile>
+) {
+	const invoices: Prisma.InvoiceCreateManyInput[] = [];
 
-		const pdfBuffer = Buffer.concat(buffers);
+	for await (const part of parts) {
+		if (part.file) {
+			const buffers = [];
+			for await (const chunk of part.file) {
+				buffers.push(chunk);
+			}
 
-		const data = await extractDataFromPdf(pdfBuffer);
+			const pdfBuffer = Buffer.concat(buffers);
 
-		const content = data.pages[0].content;
+			const data = await extractDataFromPdf(pdfBuffer);
 
-		const { customerNumber, name, ...rest } = extractSingleValues(
-			content,
-			positions
-		);
+			const content = data.pages[0].content;
 
-		const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({
-			referenceMonth: rest.referenceMonth,
-			customerId: BigInt(customerNumber),
-		});
+			const { customerNumber, name, ...rest } = extractSingleValues(
+				content,
+				positions
+			);
 
-		if (existingFile) {
-			throw new Error('Invoice already exists');
-		}
-
-		const sequencialValues = extractSequentialValues(
-			content,
-			startItemPositions,
-			SPACING
-		);
-
-		const renamedValues = transformValues(sequencialValues);
-
-		const url = await uploadFile(pdfBuffer, part.filename);
-
-		let customer = await getCustomerByCustomerId(BigInt(customerNumber));
-
-		if (!customer) {
-			customer = await createCustomer({
-				name: name,
-				customerNumber: BigInt(customerNumber),
+			const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({
+				referenceMonth: rest.referenceMonth,
+				customerId: BigInt(customerNumber),
 			});
-		}
 
-		const invoice = await createInvoice({
-			...renamedValues,
-			customerId: BigInt(customerNumber),
-			installationNumber: BigInt(rest.installationNumber),
-			dueDate: transformToDate(rest.dueDate),
-			totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
-			referenceMonth: rest.referenceMonth,
-			pdfUrl: url,
+			if (existingFile) {
+				throw new Error('Invoice already exists');
+			}
+
+			const sequencialValues = extractSequentialValues(
+				content,
+				startItemPositions,
+				SPACING
+			);
+
+			const renamedValues = transformValues(sequencialValues);
+
+			const url = await uploadFile({
+				dataBuffer: pdfBuffer,
+				filename: part.filename,
+				mimetype: part.mimetype,
+			});
+
+			let customer = await getCustomerByCustomerId(BigInt(customerNumber));
+
+			if (!customer) {
+				customer = await createCustomer({
+					name: name,
+					customerNumber: BigInt(customerNumber),
+				});
+			}
+
+			const invoice = await createInvoice({
+				...renamedValues,
+				customerId: BigInt(customerNumber),
+				installationNumber: BigInt(rest.installationNumber),
+				dueDate: transformToDate(rest.dueDate),
+				totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
+				referenceMonth: rest.referenceMonth,
+				pdfUrl: url,
+			});
+
+			invoices.push(invoice);
+		}
+	}
+	return { invoices };
+}
+
+export async function deleteInvoice(id: string) {
+	try {
+		const existingInvoice = await db.invoice.findUnique({
+			where: {
+				id,
+			},
 		});
 
-		return invoice;
+		if (!existingInvoice) {
+			throw new ApiError(404, 'Invoice not found');
+		}
+
+		const fileName = extractFilename(existingInvoice.pdfUrl);
+
+		await deleteFile(fileName);
+
+		const deletedInvoice = await db.invoice.delete({
+			where: {
+				id,
+			},
+		});
+
+		return deletedInvoice;
+	} catch (error) {
+		return error;
 	}
 }

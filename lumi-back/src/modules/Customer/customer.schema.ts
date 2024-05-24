@@ -23,6 +23,12 @@ const singleCustomerResponseSchema = z.object({
 	updatedAt: z.string(),
 });
 
+const paramsSchema = z.object({
+	id: z.string(),
+});
+
+export type ParamsSchema = z.infer<typeof paramsSchema>;
+
 const customersResponseSchema = z.array(singleCustomerResponseSchema);
 
 export type CreateCustomerInput = z.infer<typeof createCustomerSchema>;
@@ -31,4 +37,5 @@ export const { schemas: customerSchemas, $ref } = buildJsonSchemas({
 	createCustomerSchema,
 	singleCustomerResponseSchema,
 	customersResponseSchema,
+	paramsSchema,
 });
