@@ -86,7 +86,7 @@ export function InvoiceTableFilters() {
 	return (
 		<form
 			onSubmit={handleSubmit(handleFilter)}
-			className='flex items-center gap-2'
+			className='flex flex-wrap items-center gap-2'
 		>
 			<span className='text-sm font-semibold'>Filtros:</span>
 
