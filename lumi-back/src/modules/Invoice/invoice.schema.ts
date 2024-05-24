@@ -78,6 +78,10 @@ const singleInvoiceResponseSchemaWithOutCustomer = z.object({
 	...invoiceCore,
 });
 
+const manyInvoicesResponseSchemaWithOutCustomer = z.object({
+	invoices: z.array(singleInvoiceResponseSchemaWithOutCustomer),
+});
+
 const invoicesResponseSchema = z.object({
 	invoices: z.array(singleInvoiceResponseSchema),
 	meta: z.object({
@@ -100,6 +104,7 @@ export const { schemas: invoiceSchemas, $ref } = buildJsonSchemas(
 		createInvoiceSchema,
 		singleInvoiceResponseSchema,
 		singleInvoiceResponseSchemaWithOutCustomer,
+		manyInvoicesResponseSchemaWithOutCustomer,
 		invoicesResponseSchema,
 		paramsSchema,
 	},

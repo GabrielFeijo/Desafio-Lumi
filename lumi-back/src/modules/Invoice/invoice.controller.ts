@@ -59,7 +59,7 @@ export async function uploadFileHandler(
 	reply: FastifyReply
 ) {
 	try {
-		const part = await request.file();
+		const part = request.files();
 
 		if (!part) {
 			return reply.status(400).send({

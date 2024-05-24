@@ -98,68 +98,75 @@ export async function getInvoicesByCustomerNumberAndReferenceMonth({
 	return invoice;
 }
 
-export async function processPDFUpload(part: MultipartFile) {
-	if (part.file) {
-		const buffers = [];
-		for await (const chunk of part.file) {
-			buffers.push(chunk);
-		}
+export async function processPDFUpload(
+	parts: AsyncIterableIterator<MultipartFile>
+) {
+	const invoices: Prisma.InvoiceCreateManyInput[] = [];
 
-		const pdfBuffer = Buffer.concat(buffers);
+	for await (const part of parts) {
+		if (part.file) {
+			const buffers = [];
+			for await (const chunk of part.file) {
+				buffers.push(chunk);
+			}
 
-		const data = await extractDataFromPdf(pdfBuffer);
+			const pdfBuffer = Buffer.concat(buffers);
 
-		const content = data.pages[0].content;
+			const data = await extractDataFromPdf(pdfBuffer);
 
-		const { customerNumber, name, ...rest } = extractSingleValues(
-			content,
-			positions
-		);
+			const content = data.pages[0].content;
 
-		const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({
-			referenceMonth: rest.referenceMonth,
-			customerId: BigInt(customerNumber),
-		});
+			const { customerNumber, name, ...rest } = extractSingleValues(
+				content,
+				positions
+			);
 
-		if (existingFile) {
-			throw new Error('Invoice already exists');
-		}
-
-		const sequencialValues = extractSequentialValues(
-			content,
-			startItemPositions,
-			SPACING
-		);
-
-		const renamedValues = transformValues(sequencialValues);
-
-		const url = await uploadFile({
-			dataBuffer: pdfBuffer,
-			filename: part.filename,
-			mimetype: part.mimetype,
-		});
-
-		let customer = await getCustomerByCustomerId(BigInt(customerNumber));
-
-		if (!customer) {
-			customer = await createCustomer({
-				name: name,
-				customerNumber: BigInt(customerNumber),
+			const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({
+				referenceMonth: rest.referenceMonth,
+				customerId: BigInt(customerNumber),
 			});
+
+			if (existingFile) {
+				throw new Error('Invoice already exists');
+			}
+
+			const sequencialValues = extractSequentialValues(
+				content,
+				startItemPositions,
+				SPACING
+			);
+
+			const renamedValues = transformValues(sequencialValues);
+
+			const url = await uploadFile({
+				dataBuffer: pdfBuffer,
+				filename: part.filename,
+				mimetype: part.mimetype,
+			});
+
+			let customer = await getCustomerByCustomerId(BigInt(customerNumber));
+
+			if (!customer) {
+				customer = await createCustomer({
+					name: name,
+					customerNumber: BigInt(customerNumber),
+				});
+			}
+
+			const invoice = await createInvoice({
+				...renamedValues,
+				customerId: BigInt(customerNumber),
+				installationNumber: BigInt(rest.installationNumber),
+				dueDate: transformToDate(rest.dueDate),
+				totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
+				referenceMonth: rest.referenceMonth,
+				pdfUrl: url,
+			});
+
+			invoices.push(invoice);
 		}
-
-		const invoice = await createInvoice({
-			...renamedValues,
-			customerId: BigInt(customerNumber),
-			installationNumber: BigInt(rest.installationNumber),
-			dueDate: transformToDate(rest.dueDate),
-			totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
-			referenceMonth: rest.referenceMonth,
-			pdfUrl: url,
-		});
-
-		return invoice;
 	}
+	return { invoices };
 }
 
 export async function deleteInvoice(id: string) {

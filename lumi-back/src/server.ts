@@ -15,7 +15,9 @@ import { metricsSchemas } from './modules/Metrics/metrics.schema';
 export const app = fastify();
 
 app.register(cors, { origin: true });
-app.register(fastifyMultipart);
+app.register(fastifyMultipart, {
+	limits: { fileSize: 5 * 1024 * 1024 }, // Limite de 5 MB
+});
 
 app.get('/', async () => {
 	return { message: 'Hello World!' };

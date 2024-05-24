@@ -16,7 +16,7 @@ async function invoiceRoutes(app: FastifyInstance) {
 				summary: 'Create invoice',
 				body: $ref('createInvoiceSchema'),
 				response: {
-					201: $ref('singleInvoiceResponseSchema'),
+					201: $ref('singleInvoiceResponseSchemaWithOutCustomer'),
 				},
 			},
 		},
@@ -30,8 +30,9 @@ async function invoiceRoutes(app: FastifyInstance) {
 				tags: ['Invoices'],
 				summary: 'Extract invoice data from PDF',
 				consumes: ['multipart/form-data'],
+
 				response: {
-					201: $ref('singleInvoiceResponseSchema'),
+					201: $ref('manyInvoicesResponseSchemaWithOutCustomer'),
 				},
 			},
 		},
