@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2Icon } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
