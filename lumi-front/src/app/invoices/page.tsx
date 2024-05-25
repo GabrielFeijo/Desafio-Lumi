@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2Icon, Upload } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { z } from 'zod';
 
 import { getInvoices } from '@/api/get-invoices';
@@ -22,11 +22,12 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import useQueryString from '@/hooks/use-query-string';
 
 const InvoicesPage = () => {
+	const { setQueryString } = useQueryString();
+
 	const searchParams = useSearchParams();
-	const pathname = usePathname();
-	const { replace } = useRouter();
 
 	const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
@@ -53,10 +54,7 @@ const InvoicesPage = () => {
 	});
 
 	const handlePaginate = (pageIndex: number) => {
-		const params = new URLSearchParams(searchParams);
-		params.set('page', (pageIndex + 1).toString());
-
-		replace(`${pathname}?${params.toString()}`);
+		setQueryString('page', (pageIndex + 1).toString());
 	};
 
 	return (

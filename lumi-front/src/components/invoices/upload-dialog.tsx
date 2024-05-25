@@ -23,8 +23,24 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+const MAX_FILE_SIZE = 500000;
+const ACCEPTED_TYPES = ['application/pdf'];
+
 const formSchema = z.object({
-	file: z.instanceof(FileList),
+	file: z
+		.any()
+		.refine(
+			(files) => files?.length > 0,
+			'Você deve enviar pelo menos uma fatura.'
+		)
+		.refine(
+			(files) => files?.[0]?.size <= MAX_FILE_SIZE,
+			`As faturas devem ter no máximo 5 MB.`
+		)
+		.refine(
+			(files) => ACCEPTED_TYPES.includes(files?.[0]?.type),
+			'As faturas devem ser do tipo PDF.'
+		),
 });
 
 export function UploadDialog() {
@@ -45,14 +61,6 @@ export function UploadDialog() {
 	const fileRef = form.register('file');
 
 	const onSubmit = async ({ file }: z.infer<typeof formSchema>) => {
-		if (file.length === 0) {
-			form.setError('file', {
-				type: 'required',
-				message: 'Envie pelo menos uma fatura',
-			});
-			return;
-		}
-
 		try {
 			await uploadInvoices(file);
 

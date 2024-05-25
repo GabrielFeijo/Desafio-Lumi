@@ -1,8 +1,7 @@
 'use client';
-import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
 	CartesianGrid,
 	Legend,
@@ -26,6 +25,7 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import { defaultSelectOption } from '@/constants/default-select-option';
+import useQueryString from '@/hooks/use-query-string';
 
 import ChartSelect from './chart/chart-select';
 import Loader from './chart/loader';
@@ -92,9 +92,8 @@ const CustomTooltip = ({
 };
 
 export const EnergyStatsChart = () => {
+	const { setQueryString } = useQueryString();
 	const searchParams = useSearchParams()!;
-	const { replace } = useRouter();
-	const pathname = usePathname();
 
 	const selectedCustomer =
 		searchParams.get('sCustomer') || defaultSelectOption.value;
@@ -113,20 +112,6 @@ export const EnergyStatsChart = () => {
 					: undefined
 			),
 	});
-
-	const setQueryString = useCallback(
-		(name: string, value: string) => {
-			const params = new URLSearchParams(searchParams);
-			if (value) {
-				params.set(name, value);
-			} else {
-				params.delete(name);
-			}
-
-			replace(`${pathname}?${params.toString()}`);
-		},
-		[pathname, replace, searchParams]
-	);
 
 	const handleResetCustomer = () => {
 		setQueryString('sCustomer', defaultSelectOption.value);
