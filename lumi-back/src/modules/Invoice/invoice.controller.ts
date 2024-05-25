@@ -20,6 +20,11 @@ export async function createInvoiceHandler(
 		return reply.status(201).send(invoice);
 	} catch (error) {
 		console.error(error);
+		if (error instanceof ApiError) {
+			return reply.status(error.statusCode).send({
+				error: error.message,
+			});
+		}
 		return reply.status(500).send({
 			message: 'Something went wrong',
 			error: error,
