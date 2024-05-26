@@ -140,7 +140,7 @@ $ npm run dev
 Para executar os testes unitários, navegue até a pasta do projeto (lumi-front ou lumi-back) e execute o seguinte comando:
 
 ```bash
-# Para popular seu banco de dados com dados iniciais, execute o seguinte comando.
+# BACKEND - (lumi-back): Para popular seu banco de dados com dados iniciais, execute o seguinte comando.
 $ npx prisma db seed
 
 $ npm run test
