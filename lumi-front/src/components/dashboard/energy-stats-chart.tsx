@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/card';
 import { defaultSelectOption } from '@/constants/default-select-option';
 import useQueryString from '@/hooks/use-query-string';
+import { TurnOffDefaultPropsWarning } from '@/utils/turn-off-default-warning';
 
 import ChartSelect from './chart/chart-select';
 import Loader from './chart/loader';
@@ -123,6 +124,7 @@ export const EnergyStatsChart = () => {
 
 	return (
 		<Card className='col-span-6'>
+			<TurnOffDefaultPropsWarning />
 			<CardHeader className='flex flex-row items-center justify-between pb-8'>
 				<div className='space-y-1'>
 					<CardTitle className='flex items-center gap-2 text-base font-medium'>

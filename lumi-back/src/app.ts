@@ -46,6 +46,7 @@ const swaggerUiOptions: FastifySwaggerUiOptions = {
 		content: Buffer.from(getLogoBuffer(), 'base64'),
 	},
 	theme: {
+		title: 'Documentação - Desafio Técnico',
 		favicon: [
 			{
 				filename: 'favicon.png',

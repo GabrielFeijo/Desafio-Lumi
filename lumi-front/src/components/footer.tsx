@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const Footer = () => {
 	return (
-		<footer className='sticky bottom-0 w-full py-2 bg-background'>
+		<footer className='w-full py-2 bg-background'>
 			<p className='text-center font-medium text-sm'>
 				Desenvolvido por{' '}
 				<Link

@@ -111,7 +111,7 @@ export function InvoiceTableFilters() {
 								</SelectItem>
 								{customers?.map((customer) => (
 									<SelectItem
-										key={customer.customerNumber}
+										key={customer.id}
 										value={String(customer.customerNumber)}
 									>
 										{capitalizeWords(customer.name)}
