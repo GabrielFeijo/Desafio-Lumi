@@ -13,7 +13,7 @@ export default function Home() {
 		<section className='flex flex-col gap-4 w-full'>
 			<Title>Dashboard</Title>
 
-			<div className='grid grid-cols-4 gap-4'>
+			<div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4'>
 				<InvoiceCounter />
 				<CustomerCounter />
 				<TotalEnergyConsumption />
