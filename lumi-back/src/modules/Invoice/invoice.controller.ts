@@ -6,7 +6,7 @@ import {
 	getInvoices,
 	processPDFUpload,
 } from './invoice.service';
-import { ApiError } from '../../../apiError';
+import { ApiError } from '../../utils/apiError';
 
 export async function createInvoiceHandler(
 	request: FastifyRequest<{ Body: CreateInvoiceInput }>,

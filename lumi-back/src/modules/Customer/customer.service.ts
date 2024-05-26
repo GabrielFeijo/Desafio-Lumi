@@ -1,4 +1,4 @@
-import { ApiError } from '../../../apiError';
+import { ApiError } from '../../utils/apiError';
 import { db } from '../../utils/prisma';
 import { CreateCustomerInput } from './customer.schema';
 

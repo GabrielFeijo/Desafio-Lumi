@@ -82,7 +82,7 @@ async function buildApp(options: Partial<typeof defaultOptions> = {}) {
 		return { message: 'Hello World!' };
 	});
 
-	app.register(cors, { origin: true });
+	app.register(cors, { origin: JSON.parse(process.env.ORIGIN || '[]') });
 
 	app.register(fastifySwagger, swaggerOptions);
 	app.register(fastifySwaggerUi, swaggerUiOptions);
