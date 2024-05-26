@@ -11,6 +11,9 @@
 		"test": "jest --passWithNoTests",
 		"test:watch": "jest --watch"
 	},
+	"prisma": {
+		"seed": "ts-node ./prisma/seed.ts"
+	},
 	"keywords": [],
 	"author": "Gabriel Feijó",
 	"license": "ISC",
