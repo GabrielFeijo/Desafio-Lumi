@@ -1,3 +1,5 @@
+import { formatStringToFloat } from './format-string-to-float';
+
 type Result = {
 	energyQuantity: number;
 	energyAmount: number;
@@ -26,10 +28,8 @@ export const transformValues = (
 	for (const item of sequencialValues) {
 		const { name, quantity, amount } = item;
 
-		const formattedQuantity = quantity
-			? parseFloat(quantity.replace(',', '.'))
-			: 0;
-		const formattedAmount = parseFloat(amount.replace(',', '.'));
+		const formattedQuantity = quantity ? formatStringToFloat(quantity) : 0;
+		const formattedAmount = formatStringToFloat(amount);
 
 		switch (name) {
 			case 'Energia Elétrica':

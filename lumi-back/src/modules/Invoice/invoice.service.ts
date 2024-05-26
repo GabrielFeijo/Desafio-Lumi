@@ -21,6 +21,7 @@ import { deleteFile, uploadFile } from '../Aws/aws.service';
 import { Prisma } from '@prisma/client';
 import { extractFilename } from '../../utils/extract-filename';
 import { ApiError } from '../../../apiError';
+import { formatStringToFloat } from 'src/utils/format-string-to-float';
 
 export async function createInvoice(data: CreateInvoiceInput) {
 	const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({
@@ -167,7 +168,7 @@ export async function processPDFUpload(
 				customerId: BigInt(customerNumber),
 				installationNumber: BigInt(rest.installationNumber),
 				dueDate: transformToDate(rest.dueDate),
-				totalAmount: parseFloat(rest.totalAmount.replace(',', '.')),
+				totalAmount: formatStringToFloat(rest.totalAmount),
 				referenceMonth: rest.referenceMonth,
 				pdfUrl: url,
 			});
