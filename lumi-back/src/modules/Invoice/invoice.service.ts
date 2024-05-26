@@ -20,7 +20,7 @@ import { transformToDate } from '../../utils/transform-to-date';
 import { deleteFile, uploadFile } from '../Aws/aws.service';
 import { Prisma } from '@prisma/client';
 import { extractFilename } from '../../utils/extract-filename';
-import { ApiError } from '../../../apiError';
+import { ApiError } from '../../utils/apiError';
 import { formatStringToFloat } from '../../utils/format-to-float';
 
 export async function createInvoice(data: CreateInvoiceInput) {

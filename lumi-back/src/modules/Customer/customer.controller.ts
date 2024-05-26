@@ -5,7 +5,7 @@ import {
 	deleteCustomer,
 	getCustomers,
 } from './customer.service';
-import { ApiError } from '../../../apiError';
+import { ApiError } from '../../utils/apiError';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export async function registerCustomerHandler(
