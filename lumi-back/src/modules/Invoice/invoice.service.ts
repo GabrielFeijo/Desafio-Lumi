@@ -21,7 +21,7 @@ import { deleteFile, uploadFile } from '../Aws/aws.service';
 import { Prisma } from '@prisma/client';
 import { extractFilename } from '../../utils/extract-filename';
 import { ApiError } from '../../../apiError';
-import { formatStringToFloat } from 'src/utils/format-string-to-float';
+import { formatStringToFloat } from '../../utils/format-to-float';
 
 export async function createInvoice(data: CreateInvoiceInput) {
 	const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({

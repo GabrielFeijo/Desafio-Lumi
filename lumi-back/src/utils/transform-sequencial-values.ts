@@ -1,4 +1,4 @@
-import { formatStringToFloat } from './format-string-to-float';
+import { formatStringToFloat } from './format-to-float';
 
 type Result = {
 	energyQuantity: number;
