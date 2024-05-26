@@ -112,6 +112,9 @@ ORIGIN="["*"]"
 # Execute as migrações do Prisma para configurar o banco de dados.
 $ npx prisma migrate dev --name init
 
+# Para popular seu banco de dados com dados iniciais, execute o seguinte comando.
+$ npx prisma db seed
+
 # Inicie a aplicação em DEV:
 $ npm run start:dev
 ```
@@ -132,7 +135,16 @@ NEXT_PUBLIC_API_URL="http://localhost:3333/api"
 $ npm run dev
 ```
 
----
+## 🧪 Executando Testes
+
+Para executar os testes unitários, navegue até a pasta do projeto (lumi-front ou lumi-back) e execute o seguinte comando:
+
+```bash
+# Para popular seu banco de dados com dados iniciais, execute o seguinte comando.
+$ npx prisma db seed
+
+$ npm run test
+```
 
 ## 🛠️ Feito utilizando
 
