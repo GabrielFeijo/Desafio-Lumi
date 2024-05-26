@@ -1,8 +1,8 @@
 'use client';
-import { Suspense } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2Icon } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Loader2Icon, Upload } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { z } from 'zod';
 
 import { getInvoices } from '@/api/get-invoices';
@@ -10,7 +10,10 @@ import { InvoiceTableFilters } from '@/components/invoices/invoice-table-filters
 import { InvoiceTableRow } from '@/components/invoices/invoice-table-row';
 import { InvoicesTableSkeleton } from '@/components/invoices/invoices-table-skeleton';
 import { Pagination } from '@/components/invoices/pagination';
+import { UploadDialog } from '@/components/invoices/upload-dialog';
 import Title from '@/components/title';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import {
 	Table,
 	TableBody,
@@ -19,11 +22,14 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import useQueryString from '@/hooks/use-query-string';
 
 const InvoicesPage = () => {
+	const { setQueryString } = useQueryString();
+
 	const searchParams = useSearchParams();
-	const pathname = usePathname();
-	const { replace } = useRouter();
+
+	const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
 	const customerNumber = searchParams.get('customerNumber') ?? undefined;
 	const referenceMonth = searchParams.get('referenceMonth') ?? undefined;
@@ -48,10 +54,7 @@ const InvoicesPage = () => {
 	});
 
 	const handlePaginate = (pageIndex: number) => {
-		const params = new URLSearchParams(searchParams);
-		params.set('page', (pageIndex + 1).toString());
-
-		replace(`${pathname}?${params.toString()}`);
+		setQueryString('page', (pageIndex + 1).toString());
 	};
 
 	return (
@@ -63,7 +66,23 @@ const InvoicesPage = () => {
 				)}
 			</div>
 			<div className='space-y-2.5'>
-				<InvoiceTableFilters />
+				<div className='flex justify-between flex-wrap'>
+					<InvoiceTableFilters />
+					<Dialog onOpenChange={setIsUploadDialogOpen}>
+						<DialogTrigger asChild>
+							<Button
+								className='space-x-2'
+								variant='outline'
+								size='default'
+							>
+								<Upload className='size-3' />
+								<span>Enviar nova fatura</span>
+							</Button>
+						</DialogTrigger>
+
+						{isUploadDialogOpen && <UploadDialog />}
+					</Dialog>
+				</div>
 				<div className='rounded-md border'>
 					<Table>
 						<TableHeader>

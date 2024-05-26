@@ -6,6 +6,7 @@ import {
 	getCustomers,
 } from './customer.service';
 import { ApiError } from '../../../apiError';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export async function registerCustomerHandler(
 	request: FastifyRequest<{ Body: CreateCustomerInput }>,
@@ -18,6 +19,14 @@ export async function registerCustomerHandler(
 
 		return reply.status(201).send(customer);
 	} catch (error) {
+		if (error instanceof PrismaClientKnownRequestError) {
+			if (error.code === 'P2002') {
+				return reply.status(409).send({
+					message: 'Customer with the same customer number already exists.',
+				});
+			}
+		}
+
 		console.error(error);
 		return reply.status(500).send({
 			message: 'Something went wrong',

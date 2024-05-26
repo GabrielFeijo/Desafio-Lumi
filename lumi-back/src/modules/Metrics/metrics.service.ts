@@ -2,7 +2,6 @@ import { Invoice } from '@prisma/client';
 import { db } from '../../utils/prisma';
 import { startOfMonth, subMonths } from 'date-fns';
 import { sortByMonth } from '../../utils/sort-by-month';
-import { Decimal } from '@prisma/client/runtime/library';
 
 export async function getTotalInvoices(): Promise<{
 	total: number;
@@ -82,7 +81,9 @@ export async function getTotalEnergyConsumption(): Promise<{
 	let total = 0;
 
 	invoices.forEach((invoice) => {
-		total += invoice.energyQuantity + (invoice.exemptEnergyQuantity || 0);
+		total +=
+			Number(invoice.energyQuantity) +
+			(Number(invoice.exemptEnergyQuantity) || 0);
 	});
 
 	return { total };
@@ -96,7 +97,7 @@ export async function getTotalEnergyCompensated(): Promise<{
 	let total = 0;
 
 	invoices.forEach((invoice) => {
-		total += invoice.compensatedEnergyQuantity || 0;
+		total += Number(invoice.compensatedEnergyQuantity) || 0;
 	});
 
 	return { total };
@@ -135,11 +136,12 @@ export async function getEnergyStats(customerNumber?: bigint): Promise<
 			};
 		}
 
-		const energyConsumption = energyQuantity + (exemptEnergyQuantity || 0);
+		const energyConsumption =
+			Number(energyQuantity) + (Number(exemptEnergyQuantity) || 0);
 		const energyCompensated = compensatedEnergyQuantity || 0;
 
 		energyStats[referenceMonth].energyConsumption += energyConsumption;
-		energyStats[referenceMonth].energyCompensated += energyCompensated;
+		energyStats[referenceMonth].energyCompensated += Number(energyCompensated);
 	});
 
 	const data = Object.keys(energyStats)

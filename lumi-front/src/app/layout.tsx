@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
+import { Toaster } from 'sonner';
 
 import Footer from '@/components/footer';
 import { Header } from '@/components/header';
@@ -39,6 +40,7 @@ export default function RootLayout({
 							</main>
 							<Footer />
 						</div>
+						<Toaster richColors />
 					</ReactQueryProvider>
 				</ThemeProvider>
 			</body>

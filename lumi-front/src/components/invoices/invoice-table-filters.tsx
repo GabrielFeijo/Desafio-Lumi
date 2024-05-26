@@ -1,7 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import { Search, X } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { z } from 'zod';
 
 import { getCustomers } from '@/api/get-customers';
@@ -25,7 +25,6 @@ const invoicesFiltersSchema = z.object({
 type InvoiceFiltersSchema = z.infer<typeof invoicesFiltersSchema>;
 
 export function InvoiceTableFilters() {
-	const { replace } = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 
@@ -64,7 +63,8 @@ export function InvoiceTableFilters() {
 
 		params.set('page', '1');
 
-		replace(`${pathname}?${params.toString()}`);
+		const newUrl = `${pathname}?${params.toString()}`;
+		window.history.replaceState(null, '', newUrl);
 	};
 
 	const handleClearFilters = () => {
@@ -73,7 +73,8 @@ export function InvoiceTableFilters() {
 		params.delete('customerNumber');
 		params.delete('referenceMonth');
 
-		replace(`${pathname}?${params.toString()}`);
+		const newUrl = `${pathname}?${params.toString()}`;
+		window.history.replaceState(null, '', newUrl);
 
 		reset({
 			customerNumber: defaultSelectOption.value,
@@ -86,7 +87,7 @@ export function InvoiceTableFilters() {
 	return (
 		<form
 			onSubmit={handleSubmit(handleFilter)}
-			className='flex items-center gap-2'
+			className='flex flex-wrap items-center gap-2'
 		>
 			<span className='text-sm font-semibold'>Filtros:</span>
 

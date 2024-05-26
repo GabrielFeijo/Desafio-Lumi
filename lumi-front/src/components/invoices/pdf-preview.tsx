@@ -14,6 +14,7 @@ const PDFPreview = ({ pdfUrl }: { pdfUrl: string }) => {
 			<iframe
 				src={`${pdfUrl}#toolbar=0`}
 				className='w-full rounded-lg border h-full'
+				data-testid='pdf-preview-iframe'
 			></iframe>
 		</DialogContent>
 	);

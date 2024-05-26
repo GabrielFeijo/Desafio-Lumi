@@ -28,13 +28,13 @@ model Invoice {
   referenceMonth                      String
   totalAmount                         Decimal  @db.Decimal(10, 2)
   dueDate                             DateTime
-  energyQuantity                      Int
+  energyQuantity                      Decimal  @db.Decimal(10, 3)
   energyAmount                        Decimal  @db.Decimal(10, 2)
-  exemptEnergyQuantity                Int?
+  exemptEnergyQuantity                Decimal? @db.Decimal(10, 3)
   exemptEnergyAmount                  Decimal? @db.Decimal(10, 2)
-  compensatedEnergyQuantity           Int?
+  compensatedEnergyQuantity           Decimal? @db.Decimal(10, 3)
   compensatedEnergyAmount             Decimal? @db.Decimal(10, 2)
-  municipalPublicLightingContribution Decimal  @db.Decimal(10, 2)
+  municipalPublicLightingContribution Decimal  @db.Decimal(10, 3)
   pdfUrl                              String
   customerId                          BigInt
   customer                            Customer @relation(fields: [customerId], references: [customerNumber], onDelete: Cascade)

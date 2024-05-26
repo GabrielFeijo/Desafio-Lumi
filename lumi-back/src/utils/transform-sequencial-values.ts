@@ -37,10 +37,13 @@ export const transformValues = (
 				result.energyAmount = formattedAmount;
 				break;
 			case 'Energia SCEE s/ ICMS':
+			case 'Energia SCEE ISENTA':
+			case 'En comp. s/ ICMS':
 				result.exemptEnergyQuantity = formattedQuantity;
 				result.exemptEnergyAmount = formattedAmount;
 				break;
 			case 'Energia compensada GD I':
+			case 'Energia injetada HFP':
 				result.compensatedEnergyQuantity = formattedQuantity;
 				result.compensatedEnergyAmount = formattedAmount;
 				break;

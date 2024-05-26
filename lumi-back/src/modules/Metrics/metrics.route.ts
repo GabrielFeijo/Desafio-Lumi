@@ -7,6 +7,7 @@ import {
 	getTotalEnergyConsumptionHandler,
 	getTotalInvoicesHandler,
 } from './metrics.controller';
+import { $ref } from './metrics.schema';
 
 async function metricRoutes(app: FastifyInstance) {
 	app.get(
@@ -15,6 +16,9 @@ async function metricRoutes(app: FastifyInstance) {
 			schema: {
 				tags: ['Metrics'],
 				summary: 'Get total number of invoices.',
+				response: {
+					200: $ref('energyMetricsResponseSchema'),
+				},
 			},
 		},
 		getTotalInvoicesHandler
@@ -26,6 +30,9 @@ async function metricRoutes(app: FastifyInstance) {
 			schema: {
 				tags: ['Metrics'],
 				summary: 'Get total number of customers.',
+				response: {
+					200: $ref('energyMetricsResponseSchema'),
+				},
 			},
 		},
 		getTotalCustomersHandler
@@ -37,6 +44,9 @@ async function metricRoutes(app: FastifyInstance) {
 			schema: {
 				tags: ['Metrics'],
 				summary: 'Get total energy consumption.',
+				response: {
+					200: $ref('totalQuantityResponseSchema'),
+				},
 			},
 		},
 		getTotalEnergyConsumptionHandler
@@ -48,6 +58,9 @@ async function metricRoutes(app: FastifyInstance) {
 			schema: {
 				tags: ['Metrics'],
 				summary: 'Get total energy compensated.',
+				response: {
+					200: $ref('totalQuantityResponseSchema'),
+				},
 			},
 		},
 		getTotalEnergyCompensatedHandler
@@ -66,6 +79,9 @@ async function metricRoutes(app: FastifyInstance) {
 					},
 					required: [],
 				},
+				response: {
+					200: $ref('monthlyEnergyMetricsArraySchema'),
+				},
 			},
 		},
 		getEnergyStatsHandler
@@ -83,6 +99,9 @@ async function metricRoutes(app: FastifyInstance) {
 						customerNumber: { type: 'string' },
 					},
 					required: [],
+				},
+				response: {
+					200: $ref('monthlyEnergyValuesArraySchema'),
 				},
 			},
 		},

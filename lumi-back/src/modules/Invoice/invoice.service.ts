@@ -23,6 +23,15 @@ import { extractFilename } from '../../utils/extract-filename';
 import { ApiError } from '../../../apiError';
 
 export async function createInvoice(data: CreateInvoiceInput) {
+	const existingFile = await getInvoicesByCustomerNumberAndReferenceMonth({
+		referenceMonth: data.referenceMonth,
+		customerId: BigInt(data.customerId),
+	});
+
+	if (existingFile) {
+		throw new ApiError(409, 'Invoice already exists');
+	}
+
 	const invoice = await db.invoice.create({
 		data,
 	});
@@ -127,7 +136,7 @@ export async function processPDFUpload(
 			});
 
 			if (existingFile) {
-				throw new Error('Invoice already exists');
+				throw new ApiError(409, 'Invoice already exists');
 			}
 
 			const sequencialValues = extractSequentialValues(

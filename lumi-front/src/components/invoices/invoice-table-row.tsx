@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { ArrowDownToLine, Loader2, Search } from 'lucide-react';
+import { ArrowDownToLine, Search } from 'lucide-react';
 
 import { Invoice } from '@/api/get-invoices';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,7 @@ export const InvoiceTableRow = ({ invoice }: { invoice: Invoice }) => {
 							variant='outline'
 							size='default'
 						>
-							<Search className='h-3 w-3' />
+							<Search className='size-3' />
 							<span className='sr-only'>Ver fatura</span>
 						</Button>
 					</DialogTrigger>
@@ -76,11 +76,7 @@ export const InvoiceTableRow = ({ invoice }: { invoice: Invoice }) => {
 					}}
 				>
 					Baixar
-					{false ? (
-						<Loader2 className='ml-2 size-3 animate-spin' />
-					) : (
-						<ArrowDownToLine className='ml-2 size-3' />
-					)}
+					<ArrowDownToLine className='ml-2 size-3' />
 				</Button>
 			</TableCell>
 		</TableRow>

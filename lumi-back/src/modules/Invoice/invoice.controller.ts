@@ -20,6 +20,11 @@ export async function createInvoiceHandler(
 		return reply.status(201).send(invoice);
 	} catch (error) {
 		console.error(error);
+		if (error instanceof ApiError) {
+			return reply.status(error.statusCode).send({
+				error: error.message,
+			});
+		}
 		return reply.status(500).send({
 			message: 'Something went wrong',
 			error: error,
@@ -71,15 +76,14 @@ export async function uploadFileHandler(
 
 		reply.status(201).send(data);
 	} catch (error) {
-		if (error instanceof Error) {
-			return reply.status(409).send({
-				message: 'Something went wrong',
+		if (error instanceof ApiError) {
+			return reply.status(error.statusCode).send({
 				error: error.message,
 			});
 		}
-
 		return reply.status(500).send({
 			message: 'Something went wrong',
+			error: error,
 		});
 	}
 }
