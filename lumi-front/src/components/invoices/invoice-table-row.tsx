@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { ArrowDownToLine, Loader2, Search } from 'lucide-react';
+import { ArrowDownToLine, Search } from 'lucide-react';
 
 import { Invoice } from '@/api/get-invoices';
 import { Button } from '@/components/ui/button';

@@ -26,7 +26,8 @@
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts",
-		"src/components/invoices/upload-dialog.tss"
+		"src/components/invoices/upload-dialog.tss",
+		"jest.setup.ts"
 	],
 	"exclude": ["node_modules"]
 }
