@@ -59,6 +59,12 @@ Para testar a aplicação, acesse os seguintes links:
 
 <sub>PS: Optei por utilizar o domínio personalizado desafiotecnico.shop para padronizar o projeto. O frontend está hospedado no frontendlumi, enquanto o backend está hospedado no subdomínio backendlumi. Ambos os domínios possuem certificação SSL para garantir a segurança da comunicação.</sub>
 
+## 💻 Imagens da plataforma
+
+<img src="https://i.imgur.com/51dQ8ft.png" width="1920"/>
+
+<img src="https://i.imgur.com/YMTIv5x.png" width="1920"/>
+
 ## 🚀 Começo
 
 Estas instruções permitirão que você obtenha uma cópia de trabalho do projeto em sua máquina local para fins de desenvolvimento e teste.
