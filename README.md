@@ -50,6 +50,7 @@
 - Lógica de extração de dados das faturas enviadas.
 - Armazenamento das informações das faturas tratadas em um bucket no AWS S3 para disponibilização aos usuários.
 
+<!--
 ## 👾 Experimente
 
 Para testar a aplicação, acesse os seguintes links:
@@ -58,6 +59,7 @@ Para testar a aplicação, acesse os seguintes links:
 - [Backend - Documentação](https://backendlumi.desafiotecnico.shop/api/docs).
 
 <sub>PS: Optei por utilizar o domínio personalizado desafiotecnico.shop para padronizar o projeto. O frontend está hospedado no frontendlumi, enquanto o backend está hospedado no subdomínio backendlumi. Ambos os domínios possuem certificação SSL para garantir a segurança da comunicação.</sub>
+-->
 
 ## 💻 Imagens da plataforma
 
