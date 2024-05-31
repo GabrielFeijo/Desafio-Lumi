@@ -63,7 +63,17 @@ Para testar a aplicação, acesse os seguintes links:
 
 <img src="https://i.imgur.com/51dQ8ft.png" width="1920"/>
 
+### Listar faturas
+
 <img src="https://i.imgur.com/YMTIv5x.png" width="1920"/>
+
+### Pré-visualizar fatura
+
+<img src="https://i.imgur.com/dyGVXf7.png" width="1920"/>
+
+### Enviar faturas
+
+<img src="https://i.imgur.com/msolFyO.png" width="1920"/>
 
 ## 🚀 Começo
 
